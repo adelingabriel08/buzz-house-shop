@@ -19,4 +19,12 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\BuzzHouse.Model\BuzzHouse.Model.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BuzzHouse.Model\BuzzHouse.Model.csproj" />
+    </ItemGroup>
+
 </Project>

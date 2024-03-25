@@ -2,5 +2,5 @@
 
 public class SampleModel
 {
-    
+    public string Name { get; set; }
 }
