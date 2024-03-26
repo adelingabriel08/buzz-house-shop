@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuzzHouse.API", "BuzzHouse.API\BuzzHouse.API.csproj", "{4D829649-0DDB-4D9B-945B-36C88F75F8F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuzzHouse.Model", "BuzzHouse.Model\BuzzHouse.Model.csproj", "{20E0D1C4-DDEF-43C5-AB02-B8F5477FF131}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4D829649-0DDB-4D9B-945B-36C88F75F8F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D829649-0DDB-4D9B-945B-36C88F75F8F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D829649-0DDB-4D9B-945B-36C88F75F8F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D829649-0DDB-4D9B-945B-36C88F75F8F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20E0D1C4-DDEF-43C5-AB02-B8F5477FF131}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20E0D1C4-DDEF-43C5-AB02-B8F5477FF131}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20E0D1C4-DDEF-43C5-AB02-B8F5477FF131}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20E0D1C4-DDEF-43C5-AB02-B8F5477FF131}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
