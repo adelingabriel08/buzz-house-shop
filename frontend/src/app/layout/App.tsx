@@ -1,14 +1,14 @@
-import React from 'react';
-
+import { Container } from '@mui/material';
 import '../../App.css';
 import RoutingComponent from "../../Routing_Component";
-
-function App() {
+import Header from './Header';
+export default function App() {
   return (
-    <div className="App">
-      <RoutingComponent />
-    </div>
+    <>
+      <Header />
+      <Container>
+        <RoutingComponent />
+      </Container>
+    </>
   );
 }
-
-export default App;
