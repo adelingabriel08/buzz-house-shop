@@ -6,6 +6,7 @@ import RoutingComponent from "../../Routing_Component";
 function App() {
   return (
     <div className="App">
+      <RoutingComponent />
     </div>
   );
 }
