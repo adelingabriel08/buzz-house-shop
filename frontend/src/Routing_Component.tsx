@@ -6,7 +6,6 @@ import CustomizePage from '../src/pages/CustomizeItem/CustomizePage';
 import HomePage from '../src/pages/Home/HomePage';
 import ItemPage from '../src/pages/Item/ItemPage';
 import ItemsPage from '../src/pages/Item/ItemsPage';
-import Login from '../src/pages/Login/LoginPage';
 import { Product } from './app/models/product';
 function RoutingComponent() {
     //For testing purposes only
@@ -45,7 +44,6 @@ function RoutingComponent() {
             <Route path="/item" Component={ItemPage} />
             <Route path="/items" Component={ItemsPage} />
             <Route path="/order-history" Component={OrderHistory} />
-            <Route path="/login" Component={Login} />
             </Routes>
         </Router>
     );
