@@ -2,9 +2,9 @@ namespace BuzzHouse.Model.Models;
 
 public class User
 {
-    public int id { set; get; }
-    public string email { set; get; }
-    public string firstName { set; get; }
-    public string lastName { set; get; }
-    public string shippingAddress { set; get; }
+    public int Id { set; get; }
+    public string Email { set; get; }
+    public string FirstName { set; get; }
+    public string LastName { set; get; }
+    public string ShippingAddress { set; get; }
 }
