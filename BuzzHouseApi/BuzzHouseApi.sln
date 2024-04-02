@@ -4,6 +4,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuzzHouse.API", "BuzzHouse.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuzzHouse.Model", "BuzzHouse.Model\BuzzHouse.Model.csproj", "{20E0D1C4-DDEF-43C5-AB02-B8F5477FF131}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuzzHouse.Processor.Host", "BuzzHouse.Processor.Host\BuzzHouse.Processor.Host.csproj", "{56339104-244E-4B68-A4EA-B65A4674DCBD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuzzHouse.Services", "BuzzHouse.Services\BuzzHouse.Services.csproj", "{0612BDBE-9DDB-4507-BC8D-645FF709D6E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,13 @@ Global
 		{20E0D1C4-DDEF-43C5-AB02-B8F5477FF131}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20E0D1C4-DDEF-43C5-AB02-B8F5477FF131}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20E0D1C4-DDEF-43C5-AB02-B8F5477FF131}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56339104-244E-4B68-A4EA-B65A4674DCBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56339104-244E-4B68-A4EA-B65A4674DCBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56339104-244E-4B68-A4EA-B65A4674DCBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56339104-244E-4B68-A4EA-B65A4674DCBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0612BDBE-9DDB-4507-BC8D-645FF709D6E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0612BDBE-9DDB-4507-BC8D-645FF709D6E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0612BDBE-9DDB-4507-BC8D-645FF709D6E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0612BDBE-9DDB-4507-BC8D-645FF709D6E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

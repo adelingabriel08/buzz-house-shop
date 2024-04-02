@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>dotnet-BuzzHouse.Processor.Host-D76C5A62-4002-48C7-9391-8BF2422122D4</UserSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.38.1" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BuzzHouse.Model\BuzzHouse.Model.csproj" />
+      <ProjectReference Include="..\BuzzHouse.Services\BuzzHouse.Services.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BuzzHouse.Model\BuzzHouse.Model.csproj" />
+      <ProjectReference Include="..\BuzzHouse.Services\BuzzHouse.Services.csproj" />
+    </ItemGroup>
+</Project>
