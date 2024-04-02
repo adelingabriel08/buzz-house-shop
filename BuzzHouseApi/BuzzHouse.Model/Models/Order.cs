@@ -4,7 +4,7 @@ namespace BuzzHouse.Model.Models;
 
 public class Order
 {
-    public int Id { set; get; }
+    public Guid Id { set; get; }
     public DateTime CreatedDate { set; get; }
     public DateTime DeliveryDate { set; get; }
     public int UserId { set; get; }

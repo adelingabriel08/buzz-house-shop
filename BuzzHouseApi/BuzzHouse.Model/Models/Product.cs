@@ -2,7 +2,7 @@ namespace BuzzHouse.Model.Models;
 
 public class Product
 {
-    public int Id { set; get; }
+    public Guid Id { set; get; }
     public int Type { set; get; }
     public int Name { set; get; }
     public string Description { set; get; }
