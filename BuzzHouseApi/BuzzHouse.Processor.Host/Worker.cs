@@ -37,17 +37,17 @@ public class Worker : BackgroundService
             .WithLeaseContainer(leaseContainer)
             .Build();
 
-        Console.WriteLine("Starting Change Feed Processor...");
+        _logger.LogInformation("Starting Change Feed Processor...");
         await changeFeedProcessor.StartAsync();
-        Console.WriteLine("Change Feed Processor started.");
+        _logger.LogInformation("Change Feed Processor started.");
         return changeFeedProcessor;
     }
     
     private async Task StopProcessorAsync(ChangeFeedProcessor changeFeedProcessor)
     {
-        Console.WriteLine("Stopping Change Feed Processor...");
+        _logger.LogInformation("Stopping Change Feed Processor...");
         await changeFeedProcessor.StopAsync();
-        Console.WriteLine("Change Feed Processor stopped.");
+        _logger.LogInformation("Change Feed Processor stopped.");
     }
 
     private async Task CreateLeasesContainerIfNotExistsAsync(string dbName, string container)
@@ -61,24 +61,24 @@ public class Worker : BackgroundService
         IReadOnlyCollection<dynamic> changes,
         CancellationToken cancellationToken)
     {
-        Console.WriteLine($"Started handling changes for lease {context.LeaseToken}...");
-        Console.WriteLine($"Change Feed request consumed {context.Headers.RequestCharge} RU.");
+        _logger.LogInformation($"Started handling changes for lease {context.LeaseToken}...");
+        _logger.LogInformation($"Change Feed request consumed {context.Headers.RequestCharge} RU.");
         // SessionToken if needed to enforce Session consistency on another client instance
-        Console.WriteLine($"SessionToken ${context.Headers.Session}");
+        _logger.LogInformation($"SessionToken ${context.Headers.Session}");
 
         // We may want to track any operation's Diagnostics that took longer than some threshold
         if (context.Diagnostics.GetClientElapsedTime() > TimeSpan.FromSeconds(1))
         {
-            Console.WriteLine($"Change Feed request took longer than expected. Diagnostics:" + context.Diagnostics.ToString());
+            _logger.LogInformation($"Change Feed request took longer than expected. Diagnostics:" + context.Diagnostics.ToString());
         }
 
         foreach (var item in changes)
         {
-            Console.WriteLine($"Detected operation for item with id {item.id}, created at {item.creationTime}.");
+            _logger.LogInformation($"Detected operation for item with id {item.id}, created at {item.creationTime}.");
             // Simulate some asynchronous operation
             await Task.Delay(10);
         }
 
-        Console.WriteLine("Finished handling changes.");
+        _logger.LogInformation("Finished handling changes.");
     }
 }
