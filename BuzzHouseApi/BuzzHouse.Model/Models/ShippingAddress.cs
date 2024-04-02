@@ -2,9 +2,12 @@ namespace BuzzHouse.Model.Models;
 
 public class ShippingAddress
 {
-    public string street { set; get; }
-    public string number { set; get; }
-    public string city { set; get; }
-    public string postalCode { set; get; }
-    public string country { set; get; }
+    public string Street { set; get; }
+    public string Number { set; get; }
+    public string? ApartmentNumber { set; get; }
+    public string? Floor { set; get; }
+    public string? AdditionalDetails { set; get; }
+    public string City { set; get; }
+    public string PostalCode { set; get; }
+    public string Country { set; get; }
 }

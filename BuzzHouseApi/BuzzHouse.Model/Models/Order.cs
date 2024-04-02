@@ -4,11 +4,11 @@ namespace BuzzHouse.Model.Models;
 
 public class Order
 {
-    public int id { set; get; }
-    public DateTime createdDate { set; get; }
-    public DateTime deliveryDate { set; get; }
-    public int userId { set; get; }
-    public string shippingAddress { set; get; }
-    public int orderStatus { set; get; }
-    public ShoppingCart shoppingCart { set; get; }
+    public int Id { set; get; }
+    public DateTime CreatedDate { set; get; }
+    public DateTime DeliveryDate { set; get; }
+    public int UserId { set; get; }
+    public ShippingAddress ShippingAddress { set; get; }
+    public int OrderStatus { set; get; }
+    public ShoppingCart ShoppingCart { set; get; }
 }

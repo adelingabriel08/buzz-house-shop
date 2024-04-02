@@ -2,12 +2,12 @@ namespace BuzzHouse.Model.Models;
 
 public class Product
 {
-    public int id { set; get; }
-    public int type { set; get; }
-    public int name { set; get; }
-    public string description { set; get; }
-    public double price { set; get; }
-    public int stock { set; get; }
-    public string imageUrl { set; get; }
-    public bool custom { get; set; }
+    public int Id { set; get; }
+    public int Type { set; get; }
+    public int Name { set; get; }
+    public string Description { set; get; }
+    public double Price { set; get; }
+    public int Stock { set; get; }
+    public string? ImageUrl { set; get; }
+    public bool Custom { get; set; }
 }

@@ -2,10 +2,10 @@ namespace BuzzHouse.Model.Models;
 
 public class CartItem
 {
-    public Product product { set; get; }
-    public int quantity { set; get; }
-    public int productSize { set; get; }
-    public string customDetails { set; get; }
-    public string customImg { set; get; }
-    public double price { set; get; }
+    public Product Product { set; get; }
+    public int Quantity { set; get; }
+    public int ProductSize { set; get; }
+    public string? CustomDetails { set; get; }
+    public string? CustomImg { set; get; }
+    public double Price { set; get; }
 }
