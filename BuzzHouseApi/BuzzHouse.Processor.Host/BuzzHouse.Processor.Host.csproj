@@ -18,4 +18,14 @@
         <Link>.dockerignore</Link>
       </Content>
     </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BuzzHouse.Model\BuzzHouse.Model.csproj" />
+      <ProjectReference Include="..\BuzzHouse.Services\BuzzHouse.Services.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BuzzHouse.Model\BuzzHouse.Model.csproj" />
+      <ProjectReference Include="..\BuzzHouse.Services\BuzzHouse.Services.csproj" />
+    </ItemGroup>
 </Project>

@@ -1,4 +1,6 @@
+using BuzzHouse.Model.Models;
 using BuzzHouse.Processor.Host.Options;
+using BuzzHouse.Services.Contracts;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Options;
 
@@ -9,11 +11,14 @@ public class Worker : BackgroundService
     private readonly ILogger<Worker> _logger;
     private readonly ChangeFeedProcessorOptions _processorOptions;
     private readonly CosmosClient _cosmosClient;
+    private readonly IProcessedEventsService _processedEventsService;
 
-    public Worker(ILogger<Worker> logger, IOptions<ChangeFeedProcessorOptions> processorOptions, CosmosClient cosmosClient)
+    public Worker(ILogger<Worker> logger, IOptions<ChangeFeedProcessorOptions> processorOptions, CosmosClient cosmosClient, 
+        IProcessedEventsService processedEventsService)
     {
         _logger = logger;
         _cosmosClient = cosmosClient;
+        _processedEventsService = processedEventsService;
         _processorOptions = processorOptions.Value;
     }
 
@@ -30,9 +35,10 @@ public class Worker : BackgroundService
     private async Task<ChangeFeedProcessor> StartChangeFeedProcessorAsync()
     { 
         await CreateLeasesContainerIfNotExistsAsync(_processorOptions.DatabaseName, _processorOptions.LeasesContainerName);
+        await CreateProcessedEventsContainerIfNotExistsAsync(_processorOptions.DatabaseName, _processorOptions.ProcessedEventsContainerName);
         Container leaseContainer = _cosmosClient.GetContainer(_processorOptions.DatabaseName, _processorOptions.LeasesContainerName);
         ChangeFeedProcessor changeFeedProcessor = _cosmosClient.GetContainer(_processorOptions.DatabaseName, _processorOptions.SourceContainerName)
-            .GetChangeFeedProcessorBuilder<dynamic>(processorName: typeof(Worker).Assembly.FullName, onChangesDelegate: HandleChangesAsync)
+            .GetChangeFeedProcessorBuilder<dynamic>(processorName: typeof(Worker).Assembly.GetName().Name, onChangesDelegate: HandleChangesAsync)
             .WithInstanceName(Environment.MachineName)
             .WithLeaseContainer(leaseContainer)
             .Build();
@@ -54,6 +60,14 @@ public class Worker : BackgroundService
     {
         DatabaseResponse databaseResponse = await _cosmosClient.CreateDatabaseIfNotExistsAsync(dbName);
         await databaseResponse.Database.CreateContainerIfNotExistsAsync(container, "/id");
+        _logger.LogInformation($"Container {container} created successfully.");
+    }
+    
+    private async Task CreateProcessedEventsContainerIfNotExistsAsync(string dbName, string container)
+    {
+        DatabaseResponse databaseResponse = await _cosmosClient.CreateDatabaseIfNotExistsAsync(dbName);
+        await databaseResponse.Database.CreateContainerIfNotExistsAsync(container, "/id");
+        _logger.LogInformation($"Container {container} created successfully.");
     }
     
     private async Task HandleChangesAsync(
@@ -74,9 +88,31 @@ public class Worker : BackgroundService
 
         foreach (var item in changes)
         {
-            _logger.LogInformation($"Detected operation for item with id {item.id}, created at {item.creationTime}.");
-            // Simulate some asynchronous operation
-            await Task.Delay(10);
+            var processedEvent = new ProcessedEvent
+            {
+                EntityId = item.id.ToString(),
+                ProcessingTime = DateTime.UtcNow.ToString(),
+                ProcessorInstanceName = Environment.MachineName,
+                ProcessorName = typeof(Worker).Assembly.GetName().Name,
+                ContainerName = _processorOptions.SourceContainerName,
+                IsSuccessfullyProcessed = false,
+                Id = Guid.NewGuid()
+            };
+            try
+            {
+                _logger.LogInformation($"Detected operation for item with id {item.id}, created at {item.creationTime}.");
+                // Simulate some asynchronous operation
+                await Task.Delay(10);
+                
+                // add handling logic here
+
+                processedEvent.IsSuccessfullyProcessed = true;
+            } catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error processing item with id {item.id} with exception: {ex.Message} : {ex.StackTrace}");
+            }
+            
+            await _processedEventsService.LogProcessedEventAsync(processedEvent);
         }
 
         _logger.LogInformation("Finished handling changes.");
