@@ -16,7 +16,7 @@ void ConfigureServices(IServiceCollection services)
 {
     services.AddControllers();
     
-    var cosmosUrl = "https://ada.documents.azure.com:443/";
+    var cosmosUrl = "";
     var cosmosKey = "";
     var databaseName = "ada";
 
