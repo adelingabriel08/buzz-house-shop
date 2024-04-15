@@ -1,5 +1,7 @@
+using BuzzHouse.Processor.Host.Options;
 using BuzzHouse.Services.Interfaces;
 using BuzzHouse.Services.Services;
+using Microsoft.Azure.Cosmos;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,27 +11,22 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
+builder.Services.AddScoped<IUserService, CosmosUserService>();
+
+var userOptions = builder.Configuration.GetSection(nameof(UsersOptions)).Get<UsersOptions>();
+var cosmosDbOptions = builder.Configuration.GetSection(nameof(CosmosDbOptions)).Get<CosmosDbOptions>();
+
+var serializerOptions = new CosmosSerializationOptions() { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase };
+var clientOptions = new CosmosClientOptions() { SerializerOptions = serializerOptions };
+var cosmosClient = new CosmosClient(cosmosDbOptions.CosmosUrl, cosmosDbOptions.CosmosKey, clientOptions);
+
+builder.Services.AddSingleton(cosmosClient);
+builder.Services.AddOptions<CosmosDbOptions>()
+    .Bind(builder.Configuration.GetSection(nameof(CosmosDbOptions)));
+builder.Services.AddOptions<UsersOptions>()
+    .Bind(builder.Configuration.GetSection(nameof(UsersOptions)));
 
 var app = builder.Build();
-
-void ConfigureServices(IServiceCollection services)
-{
-    services.AddControllers();
-    
-    var cosmosUrl = "";
-    var cosmosKey = "";
-    var databaseName = "ada";
-
-    services.AddScoped<IUserService, CosmosUserService>(provider =>
-        new CosmosUserService(cosmosUrl, cosmosKey, databaseName));
-
-    // Add Swagger configuration
-    services.AddSwaggerGen(c =>
-    {
-        c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-    });
-}
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -39,6 +36,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+DatabaseResponse databaseResponse = await cosmosClient.CreateDatabaseIfNotExistsAsync(cosmosDbOptions.DatabaseName);
+await databaseResponse.Database.CreateContainerIfNotExistsAsync(userOptions.ContainerName, userOptions.PartitionKey);
 
 app.MapControllers();
 

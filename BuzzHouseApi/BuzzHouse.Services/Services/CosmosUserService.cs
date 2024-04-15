@@ -1,47 +1,42 @@
+using BuzzHouse.Processor.Host.Options;
 using BuzzHouse.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Options;
 using User = BuzzHouse.Model.Models.User;
 
 namespace BuzzHouse.Services.Services;
 
 public class CosmosUserService: IUserService
 {
-    private readonly string _cosmosUrl;
-    private readonly string _cosmosKey;
-    private readonly string _databaseName;
+    private readonly CosmosClient _cosmosClient;
+    private readonly CosmosDbOptions _cosmosDbOptions;
+    private readonly UsersOptions _usersOptions;
 
-    public CosmosUserService(string cosmosUrl, string cosmosKey, string databaseName)
+    public CosmosUserService(CosmosClient cosmosClient, IOptions<CosmosDbOptions> options, IOptions<UsersOptions> usersOptions)
     {
-        _cosmosUrl = cosmosUrl;
-        _cosmosKey = cosmosKey;
-        _databaseName = databaseName;
+        _cosmosClient = cosmosClient;
+        _cosmosDbOptions = options.Value;
+        _usersOptions = usersOptions.Value;
     }
 
-    public async Task<IActionResult> CreateUserAsync(User user)
+    public async Task<ServiceResult<User>> CreateUserAsync(User user)
     {
+        if (user.FirstName.Length < 3)
+        {
+            return ServiceResult<User>.Failed("Cannot have first name shorter than 3 characters.");
+        }
+        
         try
         {
-            using (var client = new CosmosClient(_cosmosUrl, _cosmosKey))
-            {
-                Database database = await client.CreateDatabaseIfNotExistsAsync(_databaseName);
-                Container container = await database.CreateContainerIfNotExistsAsync("User", "/Id", 400);
-
-                user.Id = Guid.NewGuid();
-
-                var response = await container.CreateItemAsync(user);
-                return new CreatedResult($"/user/{user.Id}", user);
-            }
+            var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName,_usersOptions.ContainerName);
+            await container.CreateItemAsync(user, new PartitionKey(user.Id.ToString()));
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error creating user: {ex.Message}");
-            return Index(); 
+            return ServiceResult<User>.Failed(ex.Message);
         }
-    }
 
-    public IActionResult Index()
-    {
-        return new BadRequestResult();
+        return ServiceResult<User>.Succeded(user);
     }
 }

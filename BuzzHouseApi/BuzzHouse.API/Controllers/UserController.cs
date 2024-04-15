@@ -1,10 +1,13 @@
 using BuzzHouse.Services.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using User = BuzzHouse.Model.Models.User;
 
 namespace BuzzHouse.API.Controllers;
 
-public class UserController
+[ApiController]
+[Route("api/users")]
+public class UserController: ControllerBase
 {
     private readonly IUserService _userService;
 
@@ -14,11 +17,15 @@ public class UserController
     }
 
     [HttpPost]
-    [Route("user")]  // Define the route for creating users
-    public async Task<IActionResult> CreateUser([FromBody] User user) // Receive user data in the request body
+    public async Task<IActionResult> CreateUser([FromBody] User user) 
     {
-        var result = await _userService.CreateUserAsync(user);
-        // Handle the result and return appropriate HTTP response (Created, BadRequest, etc.)
-        return result;
+        var result  = await _userService.CreateUserAsync(user);
+
+        if (result.HasErrors())
+        {
+            return BadRequest(result.Errors);
+        }
+        
+        return Ok(result.Item);
     }
 }
