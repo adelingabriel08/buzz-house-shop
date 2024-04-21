@@ -1,5 +1,5 @@
 using BuzzHouse.Processor.Host.Options;
-using BuzzHouse.Services.Interfaces;
+using BuzzHouse.Services.Contracts;
 using BuzzHouse.Services.Services;
 using Microsoft.Azure.Cosmos;
 using Microsoft.OpenApi.Models;
