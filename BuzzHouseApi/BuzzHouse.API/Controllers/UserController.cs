@@ -1,7 +1,5 @@
 using BuzzHouse.Services.Contracts;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Cosmos.Linq;
 using User = BuzzHouse.Model.Models.User;
 
 namespace BuzzHouse.API.Controllers;
