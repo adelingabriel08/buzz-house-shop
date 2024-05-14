@@ -12,9 +12,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddScoped<IUserService, CosmosUserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
 
 var userOptions = builder.Configuration.GetSection(nameof(UsersOptions)).Get<UsersOptions>();
 var productOptions = builder.Configuration.GetSection(nameof(ProductsOptions)).Get<ProductsOptions>();
+var shoppingCartOptions = builder.Configuration.GetSection(nameof(ShoppingCartOptions)).Get<ShoppingCartOptions>();
 var cosmosDbOptions = builder.Configuration.GetSection(nameof(CosmosDbOptions)).Get<CosmosDbOptions>();
 
 var serializerOptions = new CosmosSerializationOptions() { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase };
@@ -28,6 +30,8 @@ builder.Services.AddOptions<UsersOptions>()
     .Bind(builder.Configuration.GetSection(nameof(UsersOptions)));
 builder.Services.AddOptions<ProductsOptions>()
     .Bind(builder.Configuration.GetSection(nameof(ProductsOptions)));
+builder.Services.AddOptions<ShoppingCartOptions>()
+    .Bind(builder.Configuration.GetSection(nameof(ShoppingCartOptions)));
 
 var app = builder.Build();
 
@@ -43,6 +47,7 @@ app.UseHttpsRedirection();
 DatabaseResponse databaseResponse = await cosmosClient.CreateDatabaseIfNotExistsAsync(cosmosDbOptions.DatabaseName);
 await databaseResponse.Database.CreateContainerIfNotExistsAsync(userOptions.ContainerName, userOptions.PartitionKey);
 await databaseResponse.Database.CreateContainerIfNotExistsAsync(productOptions.ContainerName, productOptions.PartitionKey);
+await databaseResponse.Database.CreateContainerIfNotExistsAsync(shoppingCartOptions.ContainerName, shoppingCartOptions.PartitionKey);
 
 app.MapControllers();
 

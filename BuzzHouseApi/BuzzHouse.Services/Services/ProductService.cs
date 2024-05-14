@@ -94,5 +94,4 @@ public class ProductService: IProductService
         var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName,_productsOptions.ContainerName);
         await container.DeleteItemAsync<Product>(productId.ToString(), new PartitionKey(productId.ToString()));
     }
-
 }
