@@ -4,7 +4,7 @@ public class Product
 {
     public Guid Id { set; get; }
     public int Type { set; get; }
-    public int Name { set; get; }
+    public string Name { set; get; }
     public string Description { set; get; }
     public double Price { set; get; }
     public int Stock { set; get; }
