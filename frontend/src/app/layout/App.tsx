@@ -1,6 +1,6 @@
 import { Container, CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import '../../App.css';
-import RoutingComponent from "../../Routing_Component";
+import RoutingComponent from "../../RoutingComponent";
 import Header from './Header';
 import { useState } from 'react';
 export default function App() {

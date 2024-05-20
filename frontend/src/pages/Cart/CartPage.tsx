@@ -1,10 +1,4 @@
-
-
-function CartPage() {
+export default function CartPage() {
    return(
     <p>CART PAGE</p>);
 }
-
-
-
-export default CartPage;

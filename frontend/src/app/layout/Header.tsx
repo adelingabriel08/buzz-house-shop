@@ -1,14 +1,22 @@
-import { AppBar, Box, Switch, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, List, ListItem, Switch, Toolbar, Typography } from "@mui/material";
 import GoogleLogin from "../../Components/GoogleLogin";
 import GoogleLogout from "../../Components/GoogleLogout";
 import {useEffect} from "react";
-import {gapi} from 'gapi-script'
+import {gapi} from 'gapi-script';
+import { NavLink } from "react-router-dom";
 
-const clientId = "703288565306-jt1s2dbhmgku13b75vnulhap1pnrn7pu.apps.googleusercontent.com";
 interface Props{
     darkMode: boolean;
     handleThemeChange: () => void;
 }
+const clientId = "703288565306-jt1s2dbhmgku13b75vnulhap1pnrn7pu.apps.googleusercontent.com";
+const midLinks = [
+    {title: 'cart', path: '/cart'},
+    {title: 'customize', path: '/customize'},
+    {title: 'item', path: '/item'},
+    {title: 'items', path: '/items'},
+    {title: 'order-history', path: '/order-history'},
+]
 
 export default function Header({darkMode, handleThemeChange}:Props){
 
@@ -35,6 +43,18 @@ export default function Header({darkMode, handleThemeChange}:Props){
                         Buzz-House-SHOP
                     </Typography>
                     <Switch checked={darkMode} onChange={handleThemeChange}/>
+                    <List>
+                        {midLinks.map(({title, path}) => (
+                            <ListItem 
+                                component={NavLink}
+                                to={path}
+                                key={path}
+                                sx={{color: 'inherit', typography: 'h6'}}
+                            >
+                                {title.toUpperCase()}
+                            </ListItem>
+                        ))}
+                    </List>
                 </Box>
                 <GoogleLogin/>
                 <GoogleLogout/>
