@@ -13,8 +13,12 @@ var clientOptions = new CosmosClientOptions() { SerializerOptions = serializerOp
 var cosmosClient = new CosmosClient(builder.Configuration["CosmosCredentials:Endpoint"], builder.Configuration["CosmosCredentials:Key"], clientOptions);
 
 builder.Services.AddSingleton(cosmosClient);
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddOptions<ChangeFeedProcessorOptions>()
     .Bind(builder.Configuration.GetSection(nameof(ChangeFeedProcessorOptions)));
+
+builder.Services.AddOptions<SendgridOptions>()
+    .Bind(builder.Configuration.GetSection(nameof(SendgridOptions)));
 builder.Services.AddTransient<IProcessedEventsService, ProcessedEventsService>();
     
 var host = builder.Build();
