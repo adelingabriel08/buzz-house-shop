@@ -12,7 +12,7 @@ export default function RoutingComponent() {
             <Route path="/" Component={HomePage} />
             <Route path="/cart" Component={CartPage} />
             <Route path="/customize" Component={CustomizePage} />
-            <Route path="/item" Component={ItemPage} />
+            <Route path="/item/:id" Component={ItemPage} />
             <Route path="/items" Component={ItemsPage} />
             <Route path="/order-history" Component={OrderHistory} />
         </Routes>
