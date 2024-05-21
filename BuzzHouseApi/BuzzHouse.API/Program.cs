@@ -37,6 +37,8 @@ builder.Services.AddOptions<ShoppingCartOptions>()
 builder.Services.AddOptions<OrdersOptions>()
     .Bind(builder.Configuration.GetSection(nameof(ordersOptions)));
 
+builder.Services.AddCors(x => x.AddDefaultPolicy(p => p.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -53,6 +55,8 @@ await databaseResponse.Database.CreateContainerIfNotExistsAsync(userOptions.Cont
 await databaseResponse.Database.CreateContainerIfNotExistsAsync(productOptions.ContainerName, productOptions.PartitionKey);
 await databaseResponse.Database.CreateContainerIfNotExistsAsync(shoppingCartOptions.ContainerName, shoppingCartOptions.PartitionKey);
 await databaseResponse.Database.CreateContainerIfNotExistsAsync(ordersOptions.ContainerName, ordersOptions.PartitionKey);
+
+app.UseCors();
 
 app.MapControllers();
 
