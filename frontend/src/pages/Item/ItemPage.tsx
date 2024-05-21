@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Product } from "../../app/models/product";
 import { Divider, Grid, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@mui/material";
+import agent from "../../app/api/agent";
+import { error } from "console";
 
 export default function ItemPage() {
     const {id} = useParams<{id: string}>();
@@ -12,21 +14,18 @@ export default function ItemPage() {
         description: `description product${id}`,
         price: 1000,
         pictureUrl: "http://picsum.photos/100",
-        brand: `brand product${id}`
+        custom: false
     });
-    // const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
 
     // useEffect(() =>{
-    //     axios.get(`http://localhost:5000/api/product/${id}`)
-    //         .then(response => setProduct(response.data))
-    //         .catch(error => console.log(error))
-    //         .finally(() => setLoading(false));
+    //     agent.Catalog.details(parseInt(id ?? "1"))
+    //                 .then(response => setProduct(response))
+    //                 .catch(error => console.log(error))
+    //                 .finally(() => setLoading(false));
     // }, [id]);
 
-    
-
     // if (loading) return <h3>Loading...</h3>;
-    
     if (!product) return <h3>Product not found</h3>;
     
     return(
@@ -58,8 +57,8 @@ export default function ItemPage() {
                                 <TableCell>{product.type}</TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell>Brand</TableCell>
-                                <TableCell>{product.brand}</TableCell>
+                                <TableCell>Customizeable</TableCell>
+                                <TableCell>{product.custom}</TableCell>
                             </TableRow>
                             <TableRow>
                                 <TableCell>Quantity in stock</TableCell>

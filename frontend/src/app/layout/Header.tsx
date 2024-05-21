@@ -3,8 +3,9 @@ import GoogleLogin from "../../Components/GoogleLogin";
 import GoogleLogout from "../../Components/GoogleLogout";
 import {useEffect} from "react";
 import {gapi} from 'gapi-script';
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { ShoppingCart } from "@mui/icons-material";
+import { useStoreContext } from "../context/StoreContext";
 
 interface Props{
     darkMode: boolean;
@@ -12,7 +13,6 @@ interface Props{
 }
 const clientId = "703288565306-jt1s2dbhmgku13b75vnulhap1pnrn7pu.apps.googleusercontent.com";
 const midLinks = [
-    {title: 'cart', path: '/cart'},
     {title: 'customize', path: '/customize'},
     {title: 'order-history', path: '/order-history'},
 ]
@@ -33,6 +33,8 @@ const navStyles = {
 }
 
 export default function Header({darkMode, handleThemeChange}:Props){
+    const {cart} = useStoreContext();
+    const itemCount = cart?.items.reduce((sum, item) => sum + item.quantity, 0);
 
     useEffect(() =>{
 
@@ -77,11 +79,9 @@ export default function Header({darkMode, handleThemeChange}:Props){
                 </List>
                     
                 <Box display='flex' alignContent='center'>
-                    <IconButton size="large" 
-                                sx={{
-                                    color:'white'
-                                }}>
-                        <Badge badgeContent={4} color="secondary">
+                    <IconButton component={Link} to='/cart' size="large" 
+                                sx={navStyles}>
+                        <Badge badgeContent={itemCount} color="secondary">
                             <ShoppingCart />
                         </Badge>
                     </IconButton>

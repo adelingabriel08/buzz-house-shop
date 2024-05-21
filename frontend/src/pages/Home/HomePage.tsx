@@ -1,6 +1,8 @@
+import agent from "../../app/api/agent";
+import LoadingComponent from "../../app/layout/LoadingComponent";
 import { Product } from "../../app/models/product";
 import ProductList from "./ProductList";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function HomePage() {
     //For testing purposes only
@@ -11,7 +13,7 @@ export default function HomePage() {
             description: "description product1",
             price: 1000,
             pictureUrl: "http://picsum.photos/100",
-            brand: "brand product1"
+            custom: false
         },
         {
             id: 2,
@@ -19,7 +21,7 @@ export default function HomePage() {
             description: "description product2",
             price: 2000,
             pictureUrl: "http://picsum.photos/200",
-            brand: "brand product2"
+            custom: false
         },
         {
             id: 3,
@@ -27,12 +29,23 @@ export default function HomePage() {
             description: "description product3",
             price: 3000,
             pictureUrl: "http://picsum.photos/300",
-            brand: "brand product3"
+            custom: false
         }
-    ])
+    ]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        agent.Catalog.list()
+                    .then(products => setProducts(products))
+                    .catch(error => console.log(error))
+                    .finally(() => setLoading(false));
+    });
+
+    if(loading) return <LoadingComponent />
+
     return(
         <>
             <ProductList products={products} />
         </>
-    )
+    );
 }
