@@ -5,6 +5,7 @@ import ProductList from "./ProductList";
 import { useEffect, useState } from "react";
 
 export default function HomePage() {
+
     //For testing purposes only
     // [
     //     {
