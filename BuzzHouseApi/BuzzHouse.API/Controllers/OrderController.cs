@@ -3,7 +3,7 @@ using BuzzHouse.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BuzzHouse.API.Controllers;
-
+[Route("api/orders")]
 public class OrderController: ControllerBase
 {
     private readonly IOrderService _orderService;
@@ -33,10 +33,10 @@ public class OrderController: ControllerBase
         return result;
     }
 
-    [HttpGet("{createdDate}")]
-    public async Task<ActionResult<IEnumerable<Order>>> GetOrdersByCreatedDate(DateTime createdDate)
+    [HttpGet("createdDate")]
+    public async Task<ActionResult<IEnumerable<Order>>> GetOrdersByCreatedDateDesc()
     {
-        var result = await _orderService.GetOrdersByCreatedDateAsync(createdDate);
+        var result = await _orderService.GetOrdersByCreatedDateDescAsync();
         
         if (result == null)
             return NotFound();
@@ -44,7 +44,7 @@ public class OrderController: ControllerBase
         return Ok(result);
     }
     
-    [HttpGet("{orderStatus}")]
+    [HttpGet("orderStatus/{orderStatus}")]
     public async Task<IEnumerable<Order>> GetOrdersByStatusId(int orderStatus)
     {
         var result = await _orderService.GetOrdersByOrderStatusAsync(orderStatus);
@@ -52,7 +52,7 @@ public class OrderController: ControllerBase
         return result;
     }
 
-    [HttpGet("{orderId}")]
+    [HttpGet("orderId/{orderId}")]
     public async Task<ActionResult<Order>> GetOrderById(Guid orderId)
     {
         var result = await _orderService.GetOrderByIdAsync(orderId);
@@ -64,7 +64,7 @@ public class OrderController: ControllerBase
     }
     
     [HttpPut("{orderId}")]
-    public async Task<ActionResult<Order>> UpdateOrderById(Guid orderId, Order order)
+    public async Task<ActionResult<Order>> UpdateOrderById(Guid orderId, [FromBody] Order order)
     {
         if (order == null)
         {

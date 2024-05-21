@@ -60,7 +60,7 @@ public class OrderService: IOrderService
         return orders;
     }
     
-    public async Task<IEnumerable<Order>> GetOrdersByCreatedDateAsync(DateTime createdDate)
+    public async Task<IEnumerable<Order>> GetOrdersByCreatedDateDescAsync()
     {
         var orders = new List<Order>();
         
@@ -69,7 +69,7 @@ public class OrderService: IOrderService
             var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName,_ordersOptions.ContainerName);
             var query = container.GetItemQueryIterator<Order>(new QueryDefinition(
                 "SELECT o.id, o.createdDate, o.deliveryName, o.userId, o.shippingAddress, o.orderStatus, o.shoppingCart FROM " + _ordersOptions.ContainerName +
-                " AS o WHERE o.createdDate = " + createdDate));
+                " AS o ORDER BY o.createdDate DESC" ));
 
             while (query.HasMoreResults)
             {
