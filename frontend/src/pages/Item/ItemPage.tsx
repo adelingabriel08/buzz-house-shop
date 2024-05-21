@@ -8,30 +8,31 @@ import { error } from "console";
 
 export default function ItemPage() {
     const {id} = useParams<{id: string}>();
-    const [product, setProduct] = useState<Product | null>({
-        id: 1,
-        name: `product${id}`,
-        description: `description product${id}`,
-        price: 1000,
-        pictureUrl: "http://picsum.photos/100",
-        custom: false
-    });
+    const [product, setProduct] = useState<Product | null>();
+    // {
+    //     id: 1,
+    //     name: `product${id}`,
+    //     description: `description product${id}`,
+    //     price: 1000,
+    //     pictureUrl: "http://picsum.photos/100",
+    //     custom: false
+    // }
     const [loading, setLoading] = useState(true);
 
-    // useEffect(() =>{
-    //     agent.Catalog.details(parseInt(id ?? "1"))
-    //                 .then(response => setProduct(response))
-    //                 .catch(error => console.log(error))
-    //                 .finally(() => setLoading(false));
-    // }, [id]);
+    useEffect(() =>{
+        agent.Catalog.details(parseInt(id ?? "1"))
+                    .then(response => setProduct(response))
+                    .catch(error => console.log(error))
+                    .finally(() => setLoading(false));
+    }, [id]);
 
-    // if (loading) return <h3>Loading...</h3>;
+    if (loading) return <h3>Loading...</h3>;
     if (!product) return <h3>Product not found</h3>;
     
     return(
         <Grid container spacing={6}>
             <Grid item xs={6}>
-                <img src={product.pictureUrl} alt={product.name} style={{width: '100%'}}/>
+                <img src={product.imageUrl} alt={product.name} style={{width: '100%'}}/>
             </Grid>
             <Grid item xs={6}>
                 <Typography variant="h3">
@@ -62,7 +63,7 @@ export default function ItemPage() {
                             </TableRow>
                             <TableRow>
                                 <TableCell>Quantity in stock</TableCell>
-                                <TableCell>{product.quantityInStock}</TableCell>
+                                <TableCell>{product.stock}</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
