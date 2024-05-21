@@ -6,32 +6,33 @@ import { useEffect, useState } from "react";
 
 export default function HomePage() {
     //For testing purposes only
-    const[products, setProducts] = useState<Product[]>([
-        {
-            id: 1,
-            name: "product1",
-            description: "description product1",
-            price: 1000,
-            pictureUrl: "http://picsum.photos/100",
-            custom: false
-        },
-        {
-            id: 2,
-            name: "product2",
-            description: "description product2",
-            price: 2000,
-            pictureUrl: "http://picsum.photos/200",
-            custom: false
-        },
-        {
-            id: 3,
-            name: "product3",
-            description: "description product3",
-            price: 3000,
-            pictureUrl: "http://picsum.photos/300",
-            custom: false
-        }
-    ]);
+    // [
+    //     {
+    //         id: 1,
+    //         name: "product1",
+    //         description: "description product1",
+    //         price: 1000,
+    //         pictureUrl: "http://picsum.photos/100",
+    //         custom: false
+    //     },
+    //     {
+    //         id: 2,
+    //         name: "product2",
+    //         description: "description product2",
+    //         price: 2000,
+    //         pictureUrl: "http://picsum.photos/200",
+    //         custom: false
+    //     },
+    //     {
+    //         id: 3,
+    //         name: "product3",
+    //         description: "description product3",
+    //         price: 3000,
+    //         pictureUrl: "http://picsum.photos/300",
+    //         custom: false
+    //     }
+    // ]
+    const[products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

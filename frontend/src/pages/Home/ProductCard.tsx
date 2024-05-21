@@ -14,7 +14,7 @@ export default function ProductCard({product} : Props){
     const [loading, setLoading] = useState(false);
     const {setCart} = useStoreContext();
 
-    function handleAddItem(productId: number) {
+    function handleAddItem(productId: string) {
         setLoading(true);
         // agent.Cart.addItem(productId)
         //         .then(cart => setCart(cart))
@@ -62,7 +62,7 @@ export default function ProductCard({product} : Props){
                 }}/>
             <CardMedia
                 sx={{ height: 140, backgroundSize: 'contain', bgcolor: 'primary.light' }}
-                image={product.pictureUrl}
+                image={product.imageUrl}
                 title={product.name}/>
             <CardContent>
                 <Typography gutterBottom color="secondary" variant="h5">

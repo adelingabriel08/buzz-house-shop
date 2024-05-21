@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 
-axios.defaults.baseURL = 'http://localhost:5000/api/';
-axios.defaults.withCredentials = true;
+axios.defaults.baseURL = 'http://localhost:5147/api/';
 
 const responseBody = (response: AxiosResponse) => response.data;
 
