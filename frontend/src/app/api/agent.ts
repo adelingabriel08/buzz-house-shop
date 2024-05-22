@@ -40,7 +40,7 @@ const ShoppingCart = {
 const agent = {
     Catalog,
     Orders,
-    Cart: ShoppingCart
+    ShoppingCart
 }
 
 export default agent; 

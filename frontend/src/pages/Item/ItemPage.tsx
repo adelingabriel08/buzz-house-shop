@@ -43,13 +43,13 @@ export default function ItemPage() {
         if(!item || quantity > item.quantity){
             const updatedQuantity = item ? quantity - item.quantity : quantity;
             
-            agent.Cart.addItem(product?.id!, updatedQuantity)
+            agent.ShoppingCart.addItem(product?.id!, updatedQuantity)
                 .then(cart => setCart(cart))
                 .catch(error => console.log(error))
                 .finally(() => setSubmitting(false));
         } else {
             const updatedQuantity = item.quantity - quantity;
-            agent.Cart.removeItem(product?.id!, updatedQuantity)
+            agent.ShoppingCart.removeItem(product?.id!, updatedQuantity)
                 .then(() => removeItem(product?.id!, updatedQuantity))
                 .catch(error => console.log(error))
                 .finally(() => setSubmitting(false));

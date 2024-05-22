@@ -20,7 +20,7 @@ export default function App() {
       return;
     }
     console.log('Getting existing ShoppingCart');
-    agent.Cart.get(userId)
+    agent.ShoppingCart.get(userId)
       .then(cart => setCart(cart))
       .catch(error => console.log(error))
       .finally(() => setLoading(false));

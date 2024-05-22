@@ -20,7 +20,7 @@ export default function CartPage() {
     function handleAddItem(productId: string, name: string) {
         setStatus({loading: true, name});
         console.log('Adding Item in basket');
-        agent.Cart.addItem(productId)
+        agent.ShoppingCart.addItem(productId)
             .then(cart => setCart(cart))
             .catch(error => console.log(error))
             .finally(() => setStatus({loading: true, name: ''}));
@@ -31,7 +31,7 @@ export default function CartPage() {
         setStatus({loading: true, name});
         console.log('Removing Item from basket')
         if(cart){
-            agent.Cart.removeItem(productId, quantity)
+            agent.ShoppingCart.removeItem(productId, quantity)
                 .then(cart => setCart(cart))
                 .catch(error => console.log(error))
                 .finally(() => setStatus({loading: true, name: ''}));

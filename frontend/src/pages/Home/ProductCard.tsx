@@ -21,7 +21,7 @@ export default function ProductCard({product} : Props){
         setLoading(true);
 
         if(!cart) return;
-        agent.Cart.addItem(product.id)
+        agent.ShoppingCart.addItem(product.id)
             .then(cart => setCart(cart))
             .catch(error => console.log(error))
             .finally(() => setLoading(false));
