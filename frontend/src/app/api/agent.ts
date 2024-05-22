@@ -1,4 +1,6 @@
 import axios, { AxiosResponse } from "axios";
+import { Product } from "../models/product";
+import { Cart } from "../models/cart";
 
 axios.defaults.baseURL = 'http://localhost:5147/api/';
 
@@ -13,31 +15,32 @@ const requests = {
 
 const Catalog = {
     list: () => requests.get('products'),
-    details: (id: number) => requests.get(`products/${id}`),
-    update: (id:number) => requests.put(`products/${id}`, obj),
+    create: (product: Product) => requests.get(`products?product=${product}`),
+    details: (id: string) => requests.get(`products/${id}`),
+    update: (id:number) => requests.put(`products/${id}`, {}),
     delete : (id:number) => requests.delete(`products/${id}`)
 }
 
 const Orders = {
     list: () => requests.get('orders'),
     list_date: () => requests.get('orders/createdDate'),
-    order_status: (orderStatus : string) => requests.get('orders/orderStatus/${orderStatus}'),
+    order_status: (orderStatus : string) => requests.get(`orders/orderStatus/${orderStatus}`),
     detail: (id: number) => requests.get(`orders/${id}`),
-    update: (id: number) => requests.put(`orders/${id}`, obj),
+    update: (id: number) => requests.put(`orders/${id}`, {}),
     delete : (id:number) => requests.delete(`orders/${id}`)
-
 }
 
-const Cart = {
-    get: () => requests.get('cart'),
-    addItem: (productId: number, quantity = 1) => requests.post(`cart?productId=${productId}&quantity=${quantity}`, {}),
-    removeItem: (productId: number, quantity = 1) => requests.delete(`cart?productId=${productId}&quantity=${quantity}`)
-
+const ShoppingCart = {
+    get: (cartId: string) => requests.get(`shoppingcart/${cartId}?shoppingCartId=${cartId}`),
+    create: (cart: Cart) => requests.post(`shoppingcart?shoppingCart=${cart}`, {}),
+    addItem: (productId: string, quantity = 1) => requests.put(`shoppingcart?productId=${productId}&quantity=${quantity}`, {}),
+    removeItem: (productId: string, quantity = 1) => requests.delete(`shoppingcart?productId=${productId}&quantity=${quantity}`)
 }
 
 const agent = {
     Catalog,
-    Cart
+    Orders,
+    Cart: ShoppingCart
 }
 
 export default agent; 
