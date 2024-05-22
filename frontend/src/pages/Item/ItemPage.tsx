@@ -2,11 +2,14 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Product } from "../../app/models/product";
-import { Divider, Grid, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@mui/material";
+import { Divider, Grid, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from "@mui/material";
 import agent from "../../app/api/agent";
 import { error } from "console";
+import { useStoreContext } from "../../app/context/StoreContext";
+import { LoadingButton } from "@mui/lab";
 
 export default function ItemPage() {
+    const {cart, setCart, removeItem} = useStoreContext();
     const {id} = useParams<{id: string}>();
     const [product, setProduct] = useState<Product | null>();
     // {
@@ -18,13 +21,40 @@ export default function ItemPage() {
     //     custom: false
     // }
     const [loading, setLoading] = useState(true);
+    const [quantity, setQuantity] = useState(0);
+    const [submitting, setSubmitting] = useState(false);
+    const item = cart?.cartItems.find(item => item.product.id === product?.id);
 
     useEffect(() =>{
-        agent.Catalog.details(parseInt(id ?? "1"))
+        if(item) setQuantity(item.quantity);
+        agent.Catalog.details(id ?? '')
                     .then(response => setProduct(response))
                     .catch(error => console.log(error))
                     .finally(() => setLoading(false));
-    }, [id]);
+    }, [id, item]);
+
+    function handleInputChange(event: any){
+        if(event.target.value < 0) return;
+        setQuantity(parseInt(event.target.value));
+    }
+
+    function handleUpdateCart(){
+        setSubmitting(true);
+        if(!item || quantity > item.quantity){
+            const updatedQuantity = item ? quantity - item.quantity : quantity;
+            
+            agent.Cart.addItem(product?.id!, updatedQuantity)
+                .then(cart => setCart(cart))
+                .catch(error => console.log(error))
+                .finally(() => setSubmitting(false));
+        } else {
+            const updatedQuantity = item.quantity - quantity;
+            agent.Cart.removeItem(product?.id!, updatedQuantity)
+                .then(() => removeItem(product?.id!, updatedQuantity))
+                .catch(error => console.log(error))
+                .finally(() => setSubmitting(false));
+        }
+    }
 
     if (loading) return <h3>Loading...</h3>;
     if (!product) return <h3>Product not found</h3>;
@@ -68,6 +98,28 @@ export default function ItemPage() {
                         </TableBody>
                     </Table>
                 </TableContainer>
+                <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                        <TextField variant="outlined"
+                                   type="number"
+                                   label='Quantity in Cart'
+                                   fullWidth
+                                   value={quantity}
+                                   onChange={handleInputChange}/>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <LoadingButton sx={{height: '55px'}}
+                                       color='primary'
+                                       size="large"
+                                       variant="contained"
+                                       fullWidth
+                                       disabled={item?.quantity === quantity || !item && quantity === 0}
+                                       loading={submitting}
+                                       onClick={handleUpdateCart}>
+                            {item ? 'Update Quantity' : 'Add to Cart'}
+                        </LoadingButton>
+                    </Grid>
+                </Grid>
             </Grid>
         </Grid>
     );

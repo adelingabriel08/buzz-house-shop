@@ -34,7 +34,7 @@ const navStyles = {
 
 export default function Header({darkMode, handleThemeChange}:Props){
     const {cart} = useStoreContext();
-    const itemCount = cart?.items.reduce((sum, item) => sum + item.quantity, 0);
+    const itemCount = cart?.cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
     useEffect(() =>{
 

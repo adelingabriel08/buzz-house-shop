@@ -10,43 +10,20 @@ import { error } from 'console';
 import LoadingComponent from './LoadingComponent';
 
 export default function App() {
-  const {setCart} = useStoreContext();
+  const {cart, setCart} = useStoreContext();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const userId = getCookie('userId')
-    // if(userId){
-    //   agent.Cart.get()
-    //     .then(cart => setCart(cart))
-    //     .catch(error => console.log(error))
-    //     .finally(() => setLoading(false))
-    // }
-    setCart({
-      id: 1,
-      userId: 'hackerId',
-      items: [{
-          productId: 1,
-          name: "product1",
-          price: 1000,
-          pictureUrl: "http://picsum.photos/100",
-          quantity: 1
-      },
-      {
-          productId: 2,
-          name: "product2",
-          price: 2000,
-          pictureUrl: "http://picsum.photos/200",
-          quantity: 2
-      },
-      {
-          productId: 3,
-          name: "product3",
-          price: 3000,
-          pictureUrl: "http://picsum.photos/300",
-          quantity: 3
-      }]
-    })
-    setLoading(false);
+    if (!userId ) {
+      setLoading(false);
+      return;
+    }
+    console.log('Getting existing ShoppingCart');
+    agent.Cart.get(userId)
+      .then(cart => setCart(cart))
+      .catch(error => console.log(error))
+      .finally(() => setLoading(false));
   }, [setCart])
 
   const [darkMode, setDarkMode] = useState(false);
