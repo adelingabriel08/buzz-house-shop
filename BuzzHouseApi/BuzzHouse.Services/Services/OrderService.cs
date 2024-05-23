@@ -11,10 +11,14 @@ public class OrderService: IOrderService
     private readonly CosmosClient _cosmosClient;
     private readonly CosmosDbOptions _cosmosDbOptions;
     private readonly OrdersOptions _ordersOptions;
+    private readonly IEmailSender _emailSender;
+    private readonly IUserService _userService;
 
-    public OrderService(CosmosClient cosmosClient, IOptions<CosmosDbOptions> options, IOptions<OrdersOptions> ordersOptions)
+    public OrderService(CosmosClient cosmosClient, IOptions<CosmosDbOptions> options, IOptions<OrdersOptions> ordersOptions, IEmailSender emailSender, IUserService userService)
     {
         _cosmosClient = cosmosClient;
+        _emailSender = emailSender;
+        _userService = userService;
         _cosmosDbOptions = options.Value;
         _ordersOptions = ordersOptions.Value;
     }
@@ -24,7 +28,7 @@ public class OrderService: IOrderService
         try
         {
             var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName,_ordersOptions.ContainerName);
-            await container.CreateItemAsync(order, new PartitionKey(order.Id.ToString()));
+            await container.CreateItemAsync(order, new PartitionKey(order.UserId.ToString()));
         }
         catch (Exception ex)
         {
@@ -139,6 +143,24 @@ public class OrderService: IOrderService
             Console.WriteLine(e.Message);
             throw;
         }
+    }
+
+    public async Task HandleOrderChange(Order order)
+    {
+        var user = await _userService.GetUserByIdAsync(order.UserId);
+        if (user is null)
+        {
+            return;
+        }
+
+        await _emailSender.SendEmailAsync(user.Email, "Buzz House - Your order has changed",
+            $"<h4>Your order has been changed to the following details:</h4><br/>" +
+            "<p><b>Order ID: </b>" + order.Id + "</p>" +
+            "<p><b>Order Status: </b>" + order.OrderStatus + "</p>" +
+            "<p><b>ShippingAddress Date: </b>" + order.ShippingAddress + "</p>" +
+            "<p><b>Order Date: </b>" + order.CreatedDate + "</p>" +
+            "<p><b>Cart:</p></b>" +
+            "<ul>" +  string.Join("", order.ShoppingCart.CartItems.Select(x => string.Format("<li>{0}</li>", x.Product.Name))) + "</ul>");
     }
     
     public async Task DeleteOrderAsync(Guid orderId)
