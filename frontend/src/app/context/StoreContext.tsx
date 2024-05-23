@@ -36,7 +36,6 @@ export function StoreProvider({children}: PropsWithChildren<any>){
             quantity: 10,
             productSize: 10,
             customDetails: 'no custom details',
-            customImg: 'nocustomimg',
             price: 1000
         },
         {
@@ -53,7 +52,6 @@ export function StoreProvider({children}: PropsWithChildren<any>){
             quantity: 20,
             productSize: 20,
             customDetails: 'no custom details',
-            customImg: 'nocustomimg',
             price: 2000
         }]
     });
