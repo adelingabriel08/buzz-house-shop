@@ -34,7 +34,7 @@ const Orders = {
 const ShoppingCart = {
     get: (cartId: string) => requests.get(`shoppingcart/${cartId}?shoppingCartId=${cartId}`),
     create: (cart: Cart) => requests.post(`shoppingcart?shoppingCart=${cart}`, {}),
-    addItem: (cartItem: string, quantity = 1) => requests.put(`shoppingcart?cartItem=${cartItem}&quantity=${quantity}`, {}),
+    addItem: (userId: string, cartItem: CartItem) => requests.post(`shoppingcart/${userId}/items?shoppingCartId=${userId}`, cartItem),
     removeItem: (productId: string, quantity = 1) => requests.delete(`shoppingcart?productId=${productId}&quantity=${quantity}`)
 }
 

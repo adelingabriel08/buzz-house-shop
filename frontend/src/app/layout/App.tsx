@@ -14,17 +14,19 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userId = getCookie('userId')
-    if (!userId ) {
-      setLoading(false);
-      return;
-    }
+    // const userId = getCookie('userId')
+    // if (!userId ) {
+    //   setLoading(false);
+    //   return;
+    // }
     console.log('Getting existing ShoppingCart');
-    agent.ShoppingCart.get(userId)
-      .then(cart => setCart(cart))
+    agent.ShoppingCart.get('3fa85f64-5717-4562-b3fc-2c963f66afa7')
+      .then(cart => {
+        console.log(cart);
+        setCart(cart)})
       .catch(error => console.log(error))
       .finally(() => setLoading(false));
-  }, [setCart])
+  }, [setCart]);
 
   const [darkMode, setDarkMode] = useState(false);
   const paletteType = darkMode ? 'dark' : 'light';

@@ -42,11 +42,10 @@ export default function ItemPage() {
         setSubmitting(true);
         if(!item || quantity > item.quantity){
             const updatedQuantity = item ? quantity - item.quantity : quantity;
-            
-            agent.ShoppingCart.addItem(product?.id!, updatedQuantity)
-                .then(cart => setCart(cart))
-                .catch(error => console.log(error))
-                .finally(() => setSubmitting(false));
+            // agent.ShoppingCart.addItem(product?.id!, updatedQuantity)
+            //     .then(cart => setCart(cart))
+            //     .catch(error => console.log(error))
+            //     .finally(() => setSubmitting(false));
         } else {
             const updatedQuantity = item.quantity - quantity;
             agent.ShoppingCart.removeItem(product?.id!, updatedQuantity)
