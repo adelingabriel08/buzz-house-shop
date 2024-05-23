@@ -18,9 +18,9 @@ public class ShoppingCartController: ControllerBase
     }
     
     [HttpPost]
-    public async Task<IActionResult> CreateShoppingCart([FromBody] ShoppingCart shoppingCart)
+    public async Task<IActionResult> CreateShoppingCart([FromBody] Guid userId)
     {
-        var result = await _shoppingCartService.CreateShoppingCartAsync(shoppingCart);
+        var result = await _shoppingCartService.CreateShoppingCartAsync(userId);
 
         if (result.HasErrors())
         {
@@ -36,6 +36,34 @@ public class ShoppingCartController: ControllerBase
         try
         {
             var updatedCart = await _shoppingCartService.AddCartItemToShoppingCartAsync(shoppingCartId, cartItem);
+            return Ok(updatedCart);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+    
+    [HttpPut("{shoppingCartId}/items")]
+    public async Task<IActionResult> UpdateCartItem(Guid shoppingCartId, [FromBody] CartItem cartItem)
+    {
+        try
+        {
+            var updatedCart = await _shoppingCartService.UpdateCartItemInShoppingCartAsync(shoppingCartId, cartItem);
+            return Ok(updatedCart);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpDelete("{shoppingCartId}/items/{productId}")]
+    public async Task<IActionResult> RemoveCartItem(Guid shoppingCartId, Guid productId)
+    {
+        try
+        {
+            var updatedCart = await _shoppingCartService.RemoveCartItemFromShoppingCartAsync(shoppingCartId, productId);
             return Ok(updatedCart);
         }
         catch (Exception ex)

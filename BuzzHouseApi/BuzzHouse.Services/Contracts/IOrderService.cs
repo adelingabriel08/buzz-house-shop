@@ -5,7 +5,7 @@ namespace BuzzHouse.Services.Contracts;
 
 public interface IOrderService
 {
-    Task<ServiceResult<Order>> CreateOrderAsync(Order order);
+    Task<ServiceResult<Order>> CreateOrderAsync(Guid userId);
     Task<IEnumerable<Order>> GetOrdersAsync();
     Task<IEnumerable<Order>> GetOrdersByCreatedDateDescAsync();
     Task<IEnumerable<Order>> GetOrdersByOrderStatusAsync(int orderStatus);
