@@ -3,7 +3,7 @@ import { Product } from "../models/product";
 import { Cart, CartItem } from "../models/cart";
 import {getIdToken} from "../util/util";
 
-axios.defaults.baseURL = 'https://aca-app-bzh-uks.blackriver-3571cb92.uksouth.azurecontainerapps.io/api/';
+axios.defaults.baseURL = 'http://localhost:5147/api/';
 
 const responseBody = (response: AxiosResponse) => response.data;
 
@@ -34,7 +34,7 @@ const Orders = {
 const ShoppingCart = {
     get: (cartId: string) => requests.get(`shoppingcart/${cartId}?shoppingCartId=${cartId}`),
     create: (cart: Cart) => requests.post(`shoppingcart?shoppingCart=${cart}`, {}),
-    addItem: (cartItem: CartItem, quantity = 1) => requests.put(`shoppingcart?cartItem=${cartItem}&quantity=${quantity}`, {}),
+    addItem: (cartItem: string, quantity = 1) => requests.put(`shoppingcart?cartItem=${cartItem}&quantity=${quantity}`, {}),
     removeItem: (productId: string, quantity = 1) => requests.delete(`shoppingcart?productId=${productId}&quantity=${quantity}`)
 }
 
