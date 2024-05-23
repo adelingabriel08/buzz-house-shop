@@ -1,9 +1,11 @@
-import { AppBar, Box, List, ListItem, Switch, Toolbar, Typography } from "@mui/material";
+import { AppBar, Badge, Box, IconButton, List, ListItem, Switch, Toolbar, Typography } from "@mui/material";
 import GoogleLogin from "../../Components/GoogleLogin";
 import GoogleLogout from "../../Components/GoogleLogout";
 import {useEffect} from "react";
 import {gapi} from 'gapi-script';
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
+import { ShoppingCart } from "@mui/icons-material";
+import { useStoreContext } from "../context/StoreContext";
 
 interface Props{
     darkMode: boolean;
@@ -11,14 +13,28 @@ interface Props{
 }
 const clientId = "703288565306-jt1s2dbhmgku13b75vnulhap1pnrn7pu.apps.googleusercontent.com";
 const midLinks = [
-    {title: 'cart', path: '/cart'},
     {title: 'customize', path: '/customize'},
-    {title: 'item', path: '/item'},
-    {title: 'items', path: '/items'},
     {title: 'order-history', path: '/order-history'},
 ]
+const navStyles = {
+    color: 'inherit', 
+    textDecoration: 'none',
+    typography: 'h6', 
+    width: 'auto',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    '&:hover': {
+        color: 'grey.500',
+        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)'
+    },
+    '&.active':{
+        color: 'text.secondary'
+    }
+}
 
 export default function Header({darkMode, handleThemeChange}:Props){
+    const {cart} = useStoreContext();
+    const itemCount = cart?.cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
     useEffect(() =>{
 
@@ -34,30 +50,44 @@ export default function Header({darkMode, handleThemeChange}:Props){
 
     return(
         <AppBar position="static" sx={{ mb: 4 }}>
-            <Toolbar>
-                <Box sx={{ 
-                    display: 'flex', 
-                    flexGrow: 1,
-                    alignItems: 'center' }}>
-                    <Typography variant="h6">
-                        Buzz-House-SHOP
+            <Toolbar sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+            }}>
+                <Box display='flex' alignContent='center'>
+                    <Typography variant="h6"
+                                component={NavLink}
+                                to={'/'}
+                                key={'/'}
+                                sx={navStyles}>
+                        BUZZ-HOUSE Shop
                     </Typography>
                     <Switch checked={darkMode} onChange={handleThemeChange}/>
-                    <List>
-                        {midLinks.map(({title, path}) => (
-                            <ListItem 
-                                component={NavLink}
-                                to={path}
-                                key={path}
-                                sx={{color: 'inherit', typography: 'h6'}}
-                            >
-                                {title.toUpperCase()}
-                            </ListItem>
-                        ))}
-                    </List>
                 </Box>
-                <GoogleLogin/>
-                <GoogleLogout/>
+                    
+                <List sx={{display: 'flex'}}>
+                    {midLinks.map(({title, path}) => (
+                        <ListItem 
+                            component={NavLink}
+                            to={path}
+                            key={path}
+                            sx={navStyles}>
+                                {title.toUpperCase()}
+                        </ListItem>
+                    ))}
+                </List>
+                    
+                <Box display='flex' alignContent='center'>
+                    <IconButton component={Link} to='/cart' size="large" 
+                                sx={navStyles}>
+                        <Badge badgeContent={itemCount} color="secondary">
+                            <ShoppingCart />
+                        </Badge>
+                    </IconButton>
+                    <GoogleLogin/>
+                    <GoogleLogout/>
+                </Box>    
             </Toolbar>
         </AppBar>
     )
