@@ -1,16 +1,17 @@
 import axios, { AxiosResponse } from "axios";
 import { Product } from "../models/product";
 import { Cart, CartItem } from "../models/cart";
+import {getIdToken} from "../util/util";
 
-axios.defaults.baseURL = 'http://localhost:5147/api/';
+axios.defaults.baseURL = 'https://aca-app-bzh-uks.blackriver-3571cb92.uksouth.azurecontainerapps.io/api/';
 
 const responseBody = (response: AxiosResponse) => response.data;
 
 const requests = {
-    get: (url: string) => axios.get(url).then(responseBody),
-    post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
-    put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
-    delete: (url: string) => axios.delete(url).then(responseBody),
+    get: (url: string) => axios.get(url, {headers:{...getAuthorizationHeader()}}).then(responseBody),
+    post: (url: string, body: {}) => axios.post(url, body, {headers:{...getAuthorizationHeader()}}).then(responseBody),
+    put: (url: string, body: {}) => axios.put(url, body, {headers:{...getAuthorizationHeader()}}).then(responseBody),
+    delete: (url: string) => axios.delete(url, {headers:{...getAuthorizationHeader()}}).then(responseBody),
 }
 
 const Catalog = {
@@ -41,6 +42,13 @@ const agent = {
     Catalog,
     Orders,
     ShoppingCart
+}
+
+
+const getAuthorizationHeader = () => {
+    return {
+        "Authorization" : "Bearer " + getIdToken()
+    };
 }
 
 export default agent; 
