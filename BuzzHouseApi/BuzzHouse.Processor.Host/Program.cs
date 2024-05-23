@@ -14,6 +14,14 @@ var cosmosClient = new CosmosClient(builder.Configuration["CosmosCredentials:End
 
 builder.Services.AddSingleton(cosmosClient);
 builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddTransient<IUserService, CosmosUserService>();
+builder.Services.AddTransient<IOrderService, OrderService>();
+builder.Services.AddOptions<OrdersOptions>()
+    .Bind(builder.Configuration.GetSection(nameof(OrdersOptions)));
+builder.Services.AddOptions<UsersOptions>()
+    .Bind(builder.Configuration.GetSection(nameof(UsersOptions)));
+builder.Services.AddOptions<CosmosDbOptions>()
+    .Bind(builder.Configuration.GetSection(nameof(CosmosDbOptions)));
 builder.Services.AddOptions<ChangeFeedProcessorOptions>()
     .Bind(builder.Configuration.GetSection(nameof(ChangeFeedProcessorOptions)));
 
