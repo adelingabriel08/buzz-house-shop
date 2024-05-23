@@ -33,6 +33,30 @@ public class ShoppingCartService: IShoppingCartService
 
         return ServiceResult<ShoppingCart>.Succeded(shoppingCart);
     }
+    
+    public async Task<ShoppingCart> AddCartItemToShoppingCartAsync(Guid shoppingCartId, CartItem cartItem)
+    {
+        try
+        {
+            var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName, _shoppingCartOptions.ContainerName);
+            var response = await container.ReadItemAsync<ShoppingCart>(shoppingCartId.ToString(), new PartitionKey(shoppingCartId.ToString()));
+
+            var shoppingCart = response.Resource;
+            shoppingCart.CartItems.Add(cartItem);
+
+            var updatedResponse = await container.UpsertItemAsync(shoppingCart, new PartitionKey(shoppingCartId.ToString()));
+            return updatedResponse.Resource;
+        }
+        catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            throw new Exception("Shopping cart not found");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            throw;
+        }
+    }
 
     public async Task<IEnumerable<ShoppingCart>> GetShoppingCartsAsync()
     {

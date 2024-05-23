@@ -10,9 +10,10 @@ namespace BuzzHouse.API.Controllers;
 public class ShoppingCartController: ControllerBase
 {
     private readonly IShoppingCartService _shoppingCartService;
+    private readonly IProductService _productService;
 
     public ShoppingCartController(IShoppingCartService shoppingCartService)
-    {
+    {   
         _shoppingCartService = shoppingCartService;
     }
     
@@ -27,6 +28,20 @@ public class ShoppingCartController: ControllerBase
         }
         
         return Ok(result.Item);
+    }
+    
+    [HttpPost("{shoppingCartId}/items")]
+    public async Task<IActionResult> AddCartItem(Guid shoppingCartId, [FromBody] CartItem cartItem)
+    {
+        try
+        {
+            var updatedCart = await _shoppingCartService.AddCartItemToShoppingCartAsync(shoppingCartId, cartItem);
+            return Ok(updatedCart);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet]
