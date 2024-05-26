@@ -20,7 +20,7 @@ export default function App() {
     //   return;
     // }
     console.log('Getting existing ShoppingCart');
-    agent.ShoppingCart.get('3fa85f64-5717-4562-b3fc-2c963f66afa7')
+    agent.ShoppingCart.list('3fa85f64-5717-4562-b3fc-2c963f66afa6')
       .then(cart => {
         console.log(cart);
         setCart(cart)})

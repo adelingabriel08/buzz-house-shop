@@ -22,23 +22,23 @@ export default function CartPage() {
         setStatus({loading: true, name: 'add' + cartItem.product.id});
         console.log('Adding Item in basket');
         console.log(`${cartItem.product ? "product exists" : "product doesn't exist"}`)
-        agent.ShoppingCart.addItem('3fa85f64-5717-4562-b3fc-2c963f66afa7', cartItem)
-            .then(cart => setCart(cart))
-            .catch(error => console.log(error))
-            .finally(() => setStatus({loading: true, name: ''}));
-        setStatus({loading: true, name: ''});
+        if(cart)
+            agent.ShoppingCart.addItem(cart.id, cartItem)
+                .then(cart => setCart(cart))
+                .catch(error => console.log(error))
+                .finally(() => setStatus({loading: false, name: ''}));
+        setStatus({loading: false, name: ''});
     }
 
     function handleRemoveItem(productId: string, quantity = 1, name: string) {
         setStatus({loading: true, name});
         console.log('Removing Item from basket')
-        if(cart){
-            agent.ShoppingCart.removeItem(productId, quantity)
+        if(cart)
+            agent.ShoppingCart.removeItem(cart.id, productId)
                 .then(cart => setCart(cart))
                 .catch(error => console.log(error))
-                .finally(() => setStatus({loading: true, name: ''}));
-        }
-        setStatus({loading: true, name: ''});
+                .finally(() => setStatus({loading: false, name: ''}));
+        setStatus({loading: false, name: ''});
     }
 
     if(!cart) return <Typography variant="h3">Your cart is empty</Typography>
