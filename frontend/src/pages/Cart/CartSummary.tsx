@@ -1,11 +1,11 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableRow } from "@mui/material";
 import { useStoreContext } from "../../app/context/StoreContext";
-import { currencyFormat } from "../../app/util/util";
+import { calculateDeliveryFee, calculateSubtotal, currencyFormat } from "../../app/util/util";
 
 export default function CartSummary(){
     const {cart} = useStoreContext();
-    const subtotal = cart?.cartItems.reduce((sum, item) => sum + (item.quantity * item.price), 0) ?? 0;
-    const deliveryFee = subtotal > 10000 ? 0 : 500;
+    const subtotal = calculateSubtotal(cart);
+    const deliveryFee = calculateDeliveryFee(subtotal);
 
     return (
         <>

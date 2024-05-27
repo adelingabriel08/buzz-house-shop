@@ -4,8 +4,9 @@ import { Order } from "../../app/models/order";
 import agent from "../../app/api/agent";
 import SendIcon from '@mui/icons-material/Send';
 import { LoadingButton } from "@mui/lab";
-import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, ListSubheader, ListItem } from "@mui/material";
-import { currencyFormat } from "../../app/util/util";
+import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, ListSubheader, ListItem, Grid, Typography } from "@mui/material";
+import { calculateSubtotal, currencyFormat } from "../../app/util/util";
+import { Height } from "@mui/icons-material";
 
 export default function OrderDetails(){
     const {id} = useParams<{id: string}>();
@@ -82,7 +83,7 @@ export default function OrderDetails(){
                             <TableCell>Product</TableCell>
                             <TableCell align="right">Price</TableCell>
                             <TableCell align="center">Quantity</TableCell>
-                            <TableCell align="right">Subtotal</TableCell>
+                            <TableCell align="right">Price</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -99,58 +100,62 @@ export default function OrderDetails(){
                                 </TableCell>
                                 <TableCell align="right">{currencyFormat(cartItem.price)}</TableCell>
                                 <TableCell align="center"> {cartItem.quantity} </TableCell>
-                                <TableCell align="right">{(cartItem.price * cartItem.quantity / 100).toFixed(2)}</TableCell>
+                                <TableCell align="right">{currencyFormat(cartItem.price * cartItem.quantity)}</TableCell>
                             </TableRow>
                     ))}
                     </TableBody>
                 </Table>
             </TableContainer>
-            <List
-            sx={{mt: 2, width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
-            component="nav"
-            aria-labelledby="nested-list-subheader"
-            >
-                <ListItem>
-                    <ListItemIcon>
-                    </ListItemIcon>
-                    <ListItemText primary="Street" />
-                </ListItem>
-                <ListItem>
-                    <ListItemIcon>
-                    </ListItemIcon>
-                    <ListItemText primary="Number" />
-                </ListItem>
-                <ListItem>
-                    <ListItemIcon>
-                    </ListItemIcon>
-                    <ListItemText primary="Apartment number" />
-                </ListItem>
-                <ListItem>
-                    <ListItemIcon>
-                    </ListItemIcon>
-                    <ListItemText primary="Floor" />
-                </ListItem>
-                <ListItem>
-                    <ListItemIcon>
-                    </ListItemIcon>
-                    <ListItemText primary="City" />
-                </ListItem>
-                <ListItem>
-                    <ListItemIcon>
-                    </ListItemIcon>
-                    <ListItemText primary="Country" />
-                </ListItem>
-                <ListItem>
-                    <ListItemIcon>
-                    </ListItemIcon>
-                    <ListItemText primary="Postal Code" />
-                </ListItem>
-                <ListItem>
-                    <ListItemIcon>
-                    </ListItemIcon>
-                    <ListItemText primary="Additional Details" />
-                </ListItem>
-            </List>
+            <Grid container spacing={1}>
+                <Grid item xs={6} >
+                    <Paper
+                    sx={{mt: 2, width: '100%', bgcolor: 'background.paper', borderRadius: 2}}
+                    component="nav"
+                    aria-labelledby="nested-list-subheader">
+                        <ListItem>
+                            <ListItemText primary={`Street: ${order?.shippingAddress?.street}`} />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemText primary={`Number: ${order?.shippingAddress?.number}`} />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemText primary={`Apartment number: ${order?.shippingAddress?.apartmentNumber}`} />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemText primary={`Floor: ${order?.shippingAddress?.floor}`} />
+                        </ListItem>
+                    </Paper>
+                </Grid>
+                <Grid item xs={6}>
+                    <Paper
+                    sx={{mt: 2, width: '100%', bgcolor: 'background.paper', borderRadius: 2}}
+                    component="nav"
+                    aria-labelledby="nested-list-subheader">
+                        <ListItem>
+                            <ListItemText primary={`City: ${order?.shippingAddress?.city}`} />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemText primary={`Country: ${order?.shippingAddress?.country}`} />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemText primary={`Postal Code: ${order?.shippingAddress?.postalCode}`} />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemText primary={`Total: ${currencyFormat(calculateSubtotal(order?.cart))}`}/>
+                        </ListItem>
+                    </Paper>
+                </Grid>
+            </Grid>
+            <Grid container>
+                <Grid item xs={12}>
+                    <Paper
+                        sx={{mt: 2, width: '100%', bgcolor: 'background.paper', borderRadius: 2, p: 2}}
+                        component="nav"
+                        aria-labelledby="nested-list-subheader">
+                            <Typography>Additional Details: {order?.shippingAddress?.additionalDetails ?? 'No additional details'}</Typography>
+                        </Paper>
+                </Grid>
+            </Grid>
         </>
     );
 }
