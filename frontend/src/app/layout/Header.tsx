@@ -13,7 +13,7 @@ interface Props{
 }
 const clientId = "703288565306-jt1s2dbhmgku13b75vnulhap1pnrn7pu.apps.googleusercontent.com";
 const midLinks = [
-    {title: 'customize', path: '/customize'},
+    {title: 'Our products', path: '/products'},
     {title: 'order-history', path: '/order-history'},
 ]
 const navStyles = {
