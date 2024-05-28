@@ -11,22 +11,44 @@ public class OrderService: IOrderService
     private readonly CosmosClient _cosmosClient;
     private readonly CosmosDbOptions _cosmosDbOptions;
     private readonly OrdersOptions _ordersOptions;
+    private readonly IShoppingCartService _shoppingCartService;
     private readonly IEmailSender _emailSender;
     private readonly IUserService _userService;
 
-    public OrderService(CosmosClient cosmosClient, IOptions<CosmosDbOptions> options, IOptions<OrdersOptions> ordersOptions, IEmailSender emailSender, IUserService userService)
+    public OrderService(CosmosClient cosmosClient, IOptions<CosmosDbOptions> options, IOptions<OrdersOptions> ordersOptions, IEmailSender emailSender, IUserService userService, IShoppingCartService shoppingCartService)
     {
         _cosmosClient = cosmosClient;
         _emailSender = emailSender;
         _userService = userService;
         _cosmosDbOptions = options.Value;
         _ordersOptions = ordersOptions.Value;
+        _shoppingCartService = shoppingCartService;
     }
     
-    public async Task<ServiceResult<Order>> CreateOrderAsync(Order order)
+    public async Task<ServiceResult<Order>> CreateOrderAsync(Guid userId)
     {
+        Order order = new Order();
         try
         {
+            var shoppingCart = await _shoppingCartService.GetShoppingCartByIdAsync(userId);
+            Console.Write(shoppingCart);
+        
+            if (shoppingCart == null)
+            {
+                throw new Exception("Shopping cart not found for user.");
+            }
+
+            //var order = new Order
+            //{
+            order.Id = Guid.NewGuid();
+            order.CreatedDate = DateTime.UtcNow;
+            order.DeliveryDate = DateTime.UtcNow.AddDays(3);
+            order.UserId = userId;
+            order.ShoppingCart = shoppingCart;
+            order.OrderStatus = 0;
+            order.ShippingAddress = new ShippingAddress();
+            //};
+            
             var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName,_ordersOptions.ContainerName);
             await container.CreateItemAsync(order, new PartitionKey(order.UserId.ToString()));
         }
