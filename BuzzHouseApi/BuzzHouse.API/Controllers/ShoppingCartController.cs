@@ -1,10 +1,12 @@
 using BuzzHouse.Model.Models;
 using BuzzHouse.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BuzzHouse.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/shoppingcart")]
 public class ShoppingCartController: ControllerBase

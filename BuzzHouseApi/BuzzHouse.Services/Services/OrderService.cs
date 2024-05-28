@@ -40,6 +40,7 @@ public class OrderService: IOrderService
 
     public async Task<IEnumerable<Order>> GetOrdersAsync()
     {
+        var user = await _userService.GetOrCreateCurrentUserAsync();
         var orders = new List<Order>();
         
         try
@@ -47,7 +48,7 @@ public class OrderService: IOrderService
             var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName,_ordersOptions.ContainerName);
             var query = container.GetItemQueryIterator<Order>(new QueryDefinition(
                 "SELECT o.id, o.createdDate, o.deliveryName, o.userId, o.shippingAddress, o.orderStatus, o.shoppingCart FROM " + _ordersOptions.ContainerName +
-                " AS o"));
+                " AS o WHERE o.userId = @userId").WithParameter("@userId", user.Id));
 
             while (query.HasMoreResults)
             {
@@ -153,7 +154,7 @@ public class OrderService: IOrderService
             return;
         }
 
-        await _emailSender.SendEmailAsync(user.Email, "Buzz House - Your order has changed",
+        await _emailSender.SendEmailAsync(user.Id, "Buzz House - Your order has changed",
             $"<h4>Your order has been changed to the following details:</h4><br/>" +
             "<p><b>Order ID: </b>" + order.Id + "</p>" +
             "<p><b>Order Status: </b>" + order.OrderStatus + "</p>" +

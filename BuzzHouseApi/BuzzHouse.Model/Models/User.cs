@@ -5,9 +5,8 @@ namespace BuzzHouse.Model.Models;
 public class User
 {
     [JsonProperty("id")]
-    public Guid Id { set; get; }
-    [JsonProperty("email")]
-    public string Email { set; get; }
+    public string Id { set; get; }
+    
     [JsonProperty("firstname")]
     public string FirstName { set; get; }
     [JsonProperty("lastName")]
