@@ -1,9 +1,11 @@
 using BuzzHouse.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using User = BuzzHouse.Model.Models.User;
 
 namespace BuzzHouse.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/users")]
 public class UserController: ControllerBase
@@ -37,7 +39,7 @@ public class UserController: ControllerBase
 
     [HttpGet("{userId}")]
     //[Route("getUserById")]
-    public async Task<ActionResult<User>> GetUserById(Guid userId)
+    public async Task<ActionResult<User>> GetUserById(string userId)
     {
         var result = await _userService.GetUserByIdAsync(userId);
        
@@ -48,7 +50,7 @@ public class UserController: ControllerBase
     }
 
     [HttpPut("{userId}")]
-    public async Task<ActionResult<User>> UpdateUserById(Guid userId, User user)
+    public async Task<ActionResult<User>> UpdateUserById(string userId, User user)
     {
         if (user == null)
         {
@@ -66,7 +68,7 @@ public class UserController: ControllerBase
     }
 
     [HttpDelete("{userId}")]
-    public async Task<IActionResult> DeleteUser(Guid userId)
+    public async Task<IActionResult> DeleteUser(string userId)
     {
         await _userService.DeleteUserAsync(userId);
         return NoContent();

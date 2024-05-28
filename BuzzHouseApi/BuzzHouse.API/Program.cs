@@ -81,6 +81,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.AddHttpContextAccessor();
 
 var userOptions = builder.Configuration.GetSection(nameof(UsersOptions)).Get<UsersOptions>();
 var productOptions = builder.Configuration.GetSection(nameof(ProductsOptions)).Get<ProductsOptions>();
