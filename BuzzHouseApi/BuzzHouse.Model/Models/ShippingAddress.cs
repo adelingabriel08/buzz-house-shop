@@ -10,4 +10,9 @@ public class ShippingAddress
     public string City { set; get; }
     public string PostalCode { set; get; }
     public string Country { set; get; }
+    
+    public override string ToString()
+    {
+        return $"{Street} {Number}, {City}, {PostalCode}, {Country}";
+    }
 }
