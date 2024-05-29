@@ -12,13 +12,15 @@ public class Worker : BackgroundService
     private readonly ChangeFeedProcessorOptions _processorOptions;
     private readonly CosmosClient _cosmosClient;
     private readonly IProcessedEventsService _processedEventsService;
+    private readonly IOrderService _orderService;
 
     public Worker(ILogger<Worker> logger, IOptions<ChangeFeedProcessorOptions> processorOptions, CosmosClient cosmosClient, 
-        IProcessedEventsService processedEventsService)
+        IProcessedEventsService processedEventsService, IOrderService orderService)
     {
         _logger = logger;
         _cosmosClient = cosmosClient;
         _processedEventsService = processedEventsService;
+        _orderService = orderService;
         _processorOptions = processorOptions.Value;
     }
 
@@ -38,7 +40,7 @@ public class Worker : BackgroundService
         await CreateProcessedEventsContainerIfNotExistsAsync(_processorOptions.DatabaseName, _processorOptions.ProcessedEventsContainerName);
         Container leaseContainer = _cosmosClient.GetContainer(_processorOptions.DatabaseName, _processorOptions.LeasesContainerName);
         ChangeFeedProcessor changeFeedProcessor = _cosmosClient.GetContainer(_processorOptions.DatabaseName, _processorOptions.SourceContainerName)
-            .GetChangeFeedProcessorBuilder<dynamic>(processorName: typeof(Worker).Assembly.GetName().Name, onChangesDelegate: HandleChangesAsync)
+            .GetChangeFeedProcessorBuilder<Order>(processorName: typeof(Worker).Assembly.GetName().Name, onChangesDelegate: HandleChangesAsync)
             .WithInstanceName(Environment.MachineName)
             .WithLeaseContainer(leaseContainer)
             .Build();
@@ -72,7 +74,7 @@ public class Worker : BackgroundService
     
     private async Task HandleChangesAsync(
         ChangeFeedProcessorContext context,
-        IReadOnlyCollection<dynamic> changes,
+        IReadOnlyCollection<Order> changes,
         CancellationToken cancellationToken)
     {
         _logger.LogInformation($"Started handling changes for lease {context.LeaseToken}...");
@@ -90,7 +92,7 @@ public class Worker : BackgroundService
         {
             var processedEvent = new ProcessedEvent
             {
-                EntityId = item.id.ToString(),
+                EntityId = item.Id.ToString(),
                 ProcessingTime = DateTime.UtcNow.ToString(),
                 ProcessorInstanceName = Environment.MachineName,
                 ProcessorName = typeof(Worker).Assembly.GetName().Name,
@@ -100,16 +102,14 @@ public class Worker : BackgroundService
             };
             try
             {
-                _logger.LogInformation($"Detected operation for item with id {item.id}, created at {item.creationTime}.");
-                // Simulate some asynchronous operation
-                await Task.Delay(10);
+                _logger.LogInformation($"Detected operation for item with id {item.Id}, created at {item.CreatedDate}.");
                 
-                // add handling logic here
+                await _orderService.HandleOrderChange(item);
 
                 processedEvent.IsSuccessfullyProcessed = true;
             } catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error processing item with id {item.id} with exception: {ex.Message} : {ex.StackTrace}");
+                _logger.LogError(ex, $"Error processing item with id {item.Id} with exception: {ex.Message} : {ex.StackTrace}");
             }
             
             await _processedEventsService.LogProcessedEventAsync(processedEvent);
