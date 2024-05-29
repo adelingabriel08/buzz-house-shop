@@ -1,9 +1,13 @@
+using System.Security.Claims;
+using BuzzHouse.Model.Models;
 using BuzzHouse.Processor.Host.Options;
 using BuzzHouse.Services.Contracts;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Serialization.HybridRow;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.JsonWebTokens;
 using User = BuzzHouse.Model.Models.User;
 
 namespace BuzzHouse.Services.Services;
@@ -13,10 +17,12 @@ public class CosmosUserService: IUserService
     private readonly CosmosClient _cosmosClient;
     private readonly CosmosDbOptions _cosmosDbOptions;
     private readonly UsersOptions _usersOptions;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public CosmosUserService(CosmosClient cosmosClient, IOptions<CosmosDbOptions> options, IOptions<UsersOptions> usersOptions)
+    public CosmosUserService(CosmosClient cosmosClient, IOptions<CosmosDbOptions> options, IOptions<UsersOptions> usersOptions, IHttpContextAccessor httpContextAccessor)
     {
         _cosmosClient = cosmosClient;
+        _httpContextAccessor = httpContextAccessor;
         _cosmosDbOptions = options.Value;
         _usersOptions = usersOptions.Value;
     }
@@ -49,7 +55,7 @@ public class CosmosUserService: IUserService
         {
             var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName,_usersOptions.ContainerName);
             var query = container.GetItemQueryIterator<User>(new QueryDefinition(
-                "SELECT u.id, u.email, u.firstName, u.lastName, u.shippingAddress FROM " + _usersOptions.ContainerName +
+                "SELECT u.id, u.firstName, u.lastName, u.shippingAddress FROM " + _usersOptions.ContainerName +
                 " AS u"));
 
             while (query.HasMoreResults)
@@ -67,12 +73,12 @@ public class CosmosUserService: IUserService
         return users;
     }
 
-    public async Task<User> GetUserByIdAsync(Guid userId)
+    public async Task<User> GetUserByIdAsync(string userId)
     {
         try
         {
             var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName,_usersOptions.ContainerName);
-            var response = await container.ReadItemAsync<User>(userId.ToString(), new PartitionKey(userId.ToString()));
+            var response = await container.ReadItemAsync<User>(userId, new PartitionKey(userId));
             return response.Resource;
         }
         catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
@@ -81,12 +87,12 @@ public class CosmosUserService: IUserService
         }
     }
 
-    public async Task<User> UpdateUserByIdAsync(Guid userId, User user)
+    public async Task<User> UpdateUserByIdAsync(string userId, User user)
     {
         try
         {
             var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName,_usersOptions.ContainerName);
-            var response = await container.UpsertItemAsync(user, new PartitionKey(userId.ToString()));
+            var response = await container.UpsertItemAsync(user, new PartitionKey(userId));
             return response.Resource;
         }
         catch (Exception e)
@@ -96,9 +102,43 @@ public class CosmosUserService: IUserService
         }
     }
     
-    public async Task DeleteUserAsync(Guid userId)
+    public async Task DeleteUserAsync(string userId)
     {
         var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName,_usersOptions.ContainerName);
-        await container.DeleteItemAsync<User>(userId.ToString(), new PartitionKey(userId.ToString()));
+        await container.DeleteItemAsync<User>(userId, new PartitionKey(userId));
+    }
+
+    public string GetCurrentUserEmailAddress()
+    {
+        return _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Email)!.Value;
+    }
+
+    public async Task<User> GetOrCreateCurrentUserAsync()
+    {
+        var email = GetCurrentUserEmailAddress();
+
+        User? user;
+        
+        try
+        {
+            var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName,_usersOptions.ContainerName);
+            var response = await container.ReadItemAsync<User>(email, new PartitionKey(email));
+            user = response.Resource;
+        }
+        catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            user = null;
+        }
+
+        if (user is null)
+        {
+            var firstname = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.GivenName)?.Value;
+            var lastName = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Surname)?.Value;
+            user = new User(){ FirstName = firstname, LastName = lastName, Id = email};
+
+            await CreateUserAsync(user);
+        }
+
+        return user;
     }
 }

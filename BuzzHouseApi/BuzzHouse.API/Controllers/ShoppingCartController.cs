@@ -1,10 +1,12 @@
 using BuzzHouse.Model.Models;
 using BuzzHouse.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BuzzHouse.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/shoppingcart")]
 public class ShoppingCartController: ControllerBase
@@ -17,9 +19,9 @@ public class ShoppingCartController: ControllerBase
     }
     
     [HttpPost]
-    public async Task<IActionResult> CreateShoppingCart([FromBody] ShoppingCart shoppingCart)
+    public async Task<IActionResult> CreateShoppingCart(string userId)
     {
-        var result = await _shoppingCartService.CreateShoppingCartAsync(shoppingCart);
+        var result = await _shoppingCartService.CreateShoppingCartAsync(userId);
 
         if (result.HasErrors())
         {
@@ -27,6 +29,48 @@ public class ShoppingCartController: ControllerBase
         }
         
         return Ok(result.Item);
+    }
+    
+    [HttpPost("{shoppingCartId}/items")]
+    public async Task<IActionResult> AddCartItem(string shoppingCartId, [FromBody] CartItem cartItem)
+    {
+        try
+        {
+            var updatedCart = await _shoppingCartService.AddCartItemToShoppingCartAsync(shoppingCartId, cartItem);
+            return Ok(updatedCart);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+    
+    [HttpPut("{shoppingCartId}/items")]
+    public async Task<IActionResult> UpdateCartItem(string shoppingCartId, [FromBody] CartItem cartItem)
+    {
+        try
+        {
+            var updatedCart = await _shoppingCartService.UpdateCartItemInShoppingCartAsync(shoppingCartId, cartItem);
+            return Ok(updatedCart);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpDelete("{shoppingCartId}/items/{productId}")]
+    public async Task<IActionResult> RemoveCartItem(string shoppingCartId, Guid productId)
+    {
+        try
+        {
+            var updatedCart = await _shoppingCartService.RemoveCartItemFromShoppingCartAsync(shoppingCartId, productId);
+            return Ok(updatedCart);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet]
@@ -37,7 +81,7 @@ public class ShoppingCartController: ControllerBase
     }
 
     [HttpGet("{shoppingCartId}")]
-    public async Task<ActionResult<ShoppingCart>> GetShoppingCartById(Guid shoppingCartId)
+    public async Task<ActionResult<ShoppingCart>> GetShoppingCartById(string shoppingCartId)
     {
         var result = await _shoppingCartService.GetShoppingCartByIdAsync(shoppingCartId);
        
@@ -48,7 +92,7 @@ public class ShoppingCartController: ControllerBase
     }
 
     [HttpPut("{shoppingCartId}")]
-    public async Task<ActionResult<ShoppingCart>> UpdateShoppingCartById(Guid shoppingCartId, ShoppingCart shoppingCart)
+    public async Task<ActionResult<ShoppingCart>> UpdateShoppingCartById(string shoppingCartId, ShoppingCart shoppingCart)
     {
         if (shoppingCart == null)
         {
@@ -66,7 +110,7 @@ public class ShoppingCartController: ControllerBase
     }
 
     [HttpDelete("{shoppingCartId}")]
-    public async Task<IActionResult> DeleteShoppingCart(Guid shoppingCartId)
+    public async Task<IActionResult> DeleteShoppingCart(string shoppingCartId)
     {
         await _shoppingCartService.DeleteShoppingCartAsync(shoppingCartId);
         return NoContent();

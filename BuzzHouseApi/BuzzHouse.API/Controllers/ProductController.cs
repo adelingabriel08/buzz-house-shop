@@ -1,9 +1,11 @@
 using BuzzHouse.Model.Models;
 using BuzzHouse.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BuzzHouse.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/products")]
 public class ProductController: ControllerBase

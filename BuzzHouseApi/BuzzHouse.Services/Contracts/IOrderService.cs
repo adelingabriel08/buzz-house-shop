@@ -12,4 +12,5 @@ public interface IOrderService
     Task<Order> GetOrderByIdAsync(Guid orderId);
     Task<Order> UpdateOrderByIdAsync(Guid orderId, Order order);
     Task DeleteOrderAsync(Guid orderId);
+    Task HandleOrderChange(Order order);
 }

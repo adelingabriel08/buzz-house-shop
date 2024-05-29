@@ -11,10 +11,14 @@ public class OrderService: IOrderService
     private readonly CosmosClient _cosmosClient;
     private readonly CosmosDbOptions _cosmosDbOptions;
     private readonly OrdersOptions _ordersOptions;
+    private readonly IEmailSender _emailSender;
+    private readonly IUserService _userService;
 
-    public OrderService(CosmosClient cosmosClient, IOptions<CosmosDbOptions> options, IOptions<OrdersOptions> ordersOptions)
+    public OrderService(CosmosClient cosmosClient, IOptions<CosmosDbOptions> options, IOptions<OrdersOptions> ordersOptions, IEmailSender emailSender, IUserService userService)
     {
         _cosmosClient = cosmosClient;
+        _emailSender = emailSender;
+        _userService = userService;
         _cosmosDbOptions = options.Value;
         _ordersOptions = ordersOptions.Value;
     }
@@ -24,7 +28,7 @@ public class OrderService: IOrderService
         try
         {
             var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName,_ordersOptions.ContainerName);
-            await container.CreateItemAsync(order, new PartitionKey(order.Id.ToString()));
+            await container.CreateItemAsync(order, new PartitionKey(order.UserId.ToString()));
         }
         catch (Exception ex)
         {
@@ -36,6 +40,7 @@ public class OrderService: IOrderService
 
     public async Task<IEnumerable<Order>> GetOrdersAsync()
     {
+        var user = await _userService.GetOrCreateCurrentUserAsync();
         var orders = new List<Order>();
         
         try
@@ -43,7 +48,7 @@ public class OrderService: IOrderService
             var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName,_ordersOptions.ContainerName);
             var query = container.GetItemQueryIterator<Order>(new QueryDefinition(
                 "SELECT o.id, o.createdDate, o.deliveryName, o.userId, o.shippingAddress, o.orderStatus, o.shoppingCart FROM " + _ordersOptions.ContainerName +
-                " AS o"));
+                " AS o WHERE o.userId = @userId").WithParameter("@userId", user.Id));
 
             while (query.HasMoreResults)
             {
@@ -62,6 +67,7 @@ public class OrderService: IOrderService
     
     public async Task<IEnumerable<Order>> GetOrdersByCreatedDateDescAsync()
     {
+        var user = await _userService.GetOrCreateCurrentUserAsync();
         var orders = new List<Order>();
         
         try
@@ -69,7 +75,7 @@ public class OrderService: IOrderService
             var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName,_ordersOptions.ContainerName);
             var query = container.GetItemQueryIterator<Order>(new QueryDefinition(
                 "SELECT o.id, o.createdDate, o.deliveryName, o.userId, o.shippingAddress, o.orderStatus, o.shoppingCart FROM " + _ordersOptions.ContainerName +
-                " AS o ORDER BY o.createdDate DESC" ));
+                " AS o WHERE o.userId = @userId ORDER BY o.createdDate DESC").WithParameter("@userId", user.Id));
 
             while (query.HasMoreResults)
             {
@@ -88,6 +94,7 @@ public class OrderService: IOrderService
     
     public async Task<IEnumerable<Order>> GetOrdersByOrderStatusAsync(int orderStatus)
     {
+        var user = await _userService.GetOrCreateCurrentUserAsync();
         var orders = new List<Order>();
         
         try
@@ -95,7 +102,7 @@ public class OrderService: IOrderService
             var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName,_ordersOptions.ContainerName);
             var query = container.GetItemQueryIterator<Order>(new QueryDefinition(
                 "SELECT o.id, o.createdDate, o.deliveryName, o.userId, o.shippingAddress, o.orderStatus, o.shoppingCart FROM " + _ordersOptions.ContainerName +
-                " AS o WHERE o.orderStatus = " + orderStatus));
+                " AS o WHERE o.orderStatus = @orderStatus AND o.userId = @userId").WithParameter("@orderStatus", orderStatus).WithParameter("@userId", user.Id));
 
             while (query.HasMoreResults)
             {
@@ -139,6 +146,24 @@ public class OrderService: IOrderService
             Console.WriteLine(e.Message);
             throw;
         }
+    }
+
+    public async Task HandleOrderChange(Order order)
+    {
+        var user = await _userService.GetUserByIdAsync(order.UserId);
+        if (user is null)
+        {
+            return;
+        }
+
+        await _emailSender.SendEmailAsync(user.Id, "Buzz House - Your order has changed",
+            $"<h4>Your order has been changed to the following details:</h4><br/>" +
+            "<p><b>Order ID: </b>" + order.Id + "</p>" +
+            "<p><b>Order Status: </b>" + order.OrderStatus + "</p>" +
+            "<p><b>ShippingAddress Date: </b>" + order.ShippingAddress + "</p>" +
+            "<p><b>Order Date: </b>" + order.CreatedDate + "</p>" +
+            "<p><b>Cart:</p></b>" +
+            "<ul>" +  string.Join("", order.ShoppingCart.CartItems.Select(x => string.Format("<li>{0}</li>", x.Product.Name))) + "</ul>");
     }
     
     public async Task DeleteOrderAsync(Guid orderId)
