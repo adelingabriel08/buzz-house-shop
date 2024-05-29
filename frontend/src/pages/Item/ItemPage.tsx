@@ -28,7 +28,7 @@ export default function ItemPage() {
     useEffect(() =>{
         if(item) setQuantity(item.quantity);
         agent.Catalog.details(id ?? '')
-                    .then(response => setProduct(response))
+                    .then(product => setProduct(product))
                     .catch(error => console.log(error))
                     .finally(() => setLoading(false));
     }, [id, item]);
@@ -42,17 +42,16 @@ export default function ItemPage() {
         setSubmitting(true);
         if(!item || quantity > item.quantity){
             const updatedQuantity = item ? quantity - item.quantity : quantity;
-            
-            agent.ShoppingCart.addItem(product?.id!, updatedQuantity)
-                .then(cart => setCart(cart))
-                .catch(error => console.log(error))
-                .finally(() => setSubmitting(false));
+            // agent.ShoppingCart.addItem(product?.id!, updatedQuantity)
+            //     .then(cart => setCart(cart))
+            //     .catch(error => console.log(error))
+            //     .finally(() => setSubmitting(false));
         } else {
             const updatedQuantity = item.quantity - quantity;
-            agent.ShoppingCart.removeItem(product?.id!, updatedQuantity)
-                .then(() => removeItem(product?.id!, updatedQuantity))
-                .catch(error => console.log(error))
-                .finally(() => setSubmitting(false));
+            // agent.ShoppingCart.removeItem(product?.id!, updatedQuantity)
+            //     .then(() => removeItem(product?.id!, updatedQuantity))
+            //     .catch(error => console.log(error))
+            //     .finally(() => setSubmitting(false));
         }
     }
 

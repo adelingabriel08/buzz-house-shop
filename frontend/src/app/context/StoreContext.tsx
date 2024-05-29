@@ -19,45 +19,45 @@ export function useStoreContext(){
 
 export function StoreProvider({children}: PropsWithChildren<any>){
     console.log("Entered StoreProvider method.")
-    const [cart, setCart] = useState<Cart | null>({
-        id: 'some-car-t-d',
-        userId: 1,
-        cartItems: [{
-            product: {
-                id: '3fa85f64-5717-4562-b3fc-2c963f66afa1',
-                type: 1,
-                name: "product1",
-                description: "description product1",
-                price: 1000,
-                stock: 100,
-                imageUrl: "http://picsum.photos/100",
-                custom: false
-            },
-            quantity: 10,
-            productSize: 10,
-            customDetails: 'no custom details',
-            customImg: 'nocustomimg',
-            price: 1000
-        },
-        {
-            product: {
-                id: '3fa85f64-5717-4562-b3fc-2c963f66afa2',
-                type: 2,
-                name: "product2",
-                description: "description product2",
-                price: 2000,
-                stock: 200,
-                imageUrl: "http://picsum.photos/200",
-                custom: false
-            },
-            quantity: 20,
-            productSize: 20,
-            customDetails: 'no custom details',
-            customImg: 'nocustomimg',
-            price: 2000
-        }]
-    });
-
+    const [cart, setCart] = useState<Cart | null>(null);
+    // {
+    //     id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+    //     userId: 1,
+    //     cartItems: [{
+    //         product: {
+    //             id: '3fa85f64-5717-4562-b3fc-2c963f66afa1',
+    //             type: 1,
+    //             name: "product1",
+    //             description: "description product1",
+    //             price: 1000,
+    //             stock: 100,
+    //             imageUrl: "http://picsum.photos/100",
+    //             custom: false
+    //         },
+    //         quantity: 10,
+    //         productSize: 10,
+    //         customDetails: 'no custom details',
+    //         customImg: 'nocustomimg',
+    //         price: 1000
+    //     },
+    //     {
+    //         product: {
+    //             id: '3fa85f64-5717-4562-b3fc-2c963f66afa2',
+    //             type: 2,
+    //             name: "product2",
+    //             description: "description product2",
+    //             price: 2000,
+    //             stock: 200,
+    //             imageUrl: "http://picsum.photos/200",
+    //             custom: false
+    //         },
+    //         quantity: 20,
+    //         productSize: 20,
+    //         customDetails: 'no custom details',
+    //         customImg: 'nocustomimg',
+    //         price: 2000
+    //     }]
+    // }
     function removeItem(productId: string, quantity: number){
         if (!cart) return;
         const items = [...cart.cartItems];
