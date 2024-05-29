@@ -49,7 +49,18 @@ public class ShoppingCartService: IShoppingCartService
             var shoppingCart = response.Resource;
             cartItem.Price = cartItem.Product.Price * cartItem.Quantity;
 
-            shoppingCart.CartItems.Add(cartItem);
+            var existingCartItem = shoppingCart.CartItems.FirstOrDefault(ci => ci.Product.Id == cartItem.Product.Id && ci.ProductSize == cartItem.ProductSize);
+
+            if (existingCartItem != null)
+            {
+                existingCartItem.Quantity += cartItem.Quantity;
+                existingCartItem.Price = existingCartItem.Product.Price * existingCartItem.Quantity;
+            }
+            else
+            {
+                shoppingCart.CartItems.Add(cartItem);
+            }
+            //shoppingCart.CartItems.Add(cartItem);
 
             var updatedResponse = await container.UpsertItemAsync(shoppingCart, new PartitionKey(shoppingCartId.ToString()));
             return updatedResponse.Resource;
@@ -135,22 +146,25 @@ public class ShoppingCartService: IShoppingCartService
         }
     }
 
-    public async Task<IEnumerable<ShoppingCart>> GetShoppingCartsAsync()
+    public async Task<ShoppingCart> GetShoppingCartsAsync()
     {
         var user = await _userService.GetOrCreateCurrentUserAsync();
-        var shoppingCarts = new List<ShoppingCart>();
-        
+
         try
         {
             var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName, _shoppingCartOptions.ContainerName);
             var query = container.GetItemQueryIterator<ShoppingCart>(new QueryDefinition(
-                "SELECT sc.id, sc.userId, sc.cartItems FROM " + _shoppingCartOptions.ContainerName +
-                " AS sc WHERE sc.userId = @userId ").WithParameter("@userId", user.Id));
+                    "SELECT * FROM " + _shoppingCartOptions.ContainerName + " AS sc WHERE sc.userId = @userId")
+                .WithParameter("@userId", user.Id));
 
-            while (query.HasMoreResults)
+            if (query.HasMoreResults)
             {
                 var response = await query.ReadNextAsync();
-                shoppingCarts.AddRange(response);
+                return response.FirstOrDefault();
+            }
+            else
+            {
+                return null;
             }
         }
         catch (Exception e)
@@ -158,8 +172,6 @@ public class ShoppingCartService: IShoppingCartService
             Console.WriteLine(e.Message);
             throw;
         }
-
-        return shoppingCarts;
     }
 
     public async Task<ShoppingCart> GetShoppingCartByIdAsync(string shoppingCartId)

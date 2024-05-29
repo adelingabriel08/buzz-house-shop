@@ -30,9 +30,10 @@ const Order = {
 }
 
 const ShoppingCart = {
-    list: (cartId: string) => requests.get(`shoppingcart/${cartId}?shoppingCartId=${cartId}`),
+    list: () => requests.get(`shoppingcart`),
     create: (cart: Cart) => requests.post(`shoppingcart?`, {cart}),
-    addItem: (userId: string, cartItem: CartItem) => requests.post(`shoppingcart/${userId}/items?shoppingCartId=${userId}`, cartItem),
+    addItem: (cartId: string, cartItem: CartItem) => requests.post(`shoppingcart/${cartId}/items?shoppingCartId=${cartId}`, cartItem),
+    updateCartitem: (cartId: string, cartItem: CartItem) => requests.put(`shoppingcart/${cartId}/items?shoppingCartId=${cartId}`, cartItem),
     removeItem: (cartId: string, productId: string) => requests.delete(`shoppingcart/${cartId}/items/${productId}?shoppingCartId=${cartId}&productId=${productId}`)
 }
 

@@ -21,7 +21,7 @@ export default function ItemPage() {
     const [loading, setLoading] = useState(true);
     const [quantity, setQuantity] = useState(0);
     const [submitting, setSubmitting] = useState(false);
-    const item = cart?.cartItems.find(item => item.product.id === product?.id);
+    const item = cart?.cartItems?.find(item => item.product.id === product?.id);
 
     useEffect(() =>{
         if(item) setQuantity(item.quantity);

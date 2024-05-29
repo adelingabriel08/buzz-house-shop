@@ -19,26 +19,26 @@ export default function CartTable({isCart=true}: Props){
     
     function handleAddItem(cartItem: CartItem) {
         setStatus({loading: true, name: 'add' + cartItem.product.id});
-        console.log('Adding Item in basket');
-        console.log(`${cartItem.product ? "product exists" : "product doesn't exist"}`)
+        cartItem.quantity += 1;
         if(cart)
-            agent.ShoppingCart.addItem(cart.id, cartItem)
+            agent.ShoppingCart.updateCartitem(cart.id, cartItem)
                 .then(cart => setCart(cart))
                 .catch(error => console.log(error))
                 .finally(() => setStatus({loading: false, name: ''}));
         setStatus({loading: false, name: ''});
     }
 
-    function handleRemoveItem(productId: string, quantity = 1, name: string) {
-        setStatus({loading: true, name});
-        console.log('Removing Item from basket')
+    function handleRemoveItem(cartItem: CartItem) {
+        setStatus({loading: true, name: 'add' + cartItem.product.id});
+        cartItem.quantity -= 1;
         if(cart)
-            agent.ShoppingCart.removeItem(cart.id, productId)
+            agent.ShoppingCart.updateCartitem(cart.id, cartItem)
                 .then(cart => setCart(cart))
                 .catch(error => console.log(error))
                 .finally(() => setStatus({loading: false, name: ''}));
         setStatus({loading: false, name: ''});
     }
+
 
     return (
         <TableContainer component={Paper}>
@@ -54,7 +54,7 @@ export default function CartTable({isCart=true}: Props){
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {cart?.cartItems.map((cartItem) => (
+                    {cart?.cartItems?.map((cartItem) => (
                         <TableRow
                         key={cartItem.product.id}
                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -69,7 +69,7 @@ export default function CartTable({isCart=true}: Props){
                             <TableCell align="center">
                             {isCart &&
                                 <LoadingButton loading={status.loading && status.name === 'rem' + cartItem.product.id} 
-                                            onClick={() => handleRemoveItem(cartItem.product.id, 1, 'rem' + cartItem.product.id)} 
+                                            onClick={() => handleRemoveItem(cartItem)} 
                                             color="error">
                                     <Remove />
                                 </LoadingButton>
@@ -88,7 +88,7 @@ export default function CartTable({isCart=true}: Props){
                             {isCart &&
                             <TableCell align="right">
                                 <LoadingButton loading={status.loading && status.name === 'del' + cartItem.product.id} 
-                                            onClick={() => handleRemoveItem(cartItem.product.id, cartItem.quantity, 'del' + cartItem.product.id)} 
+                                            onClick={() => handleRemoveItem(cartItem)} 
                                             color="error">
                                     <Delete />
                                 </LoadingButton>
