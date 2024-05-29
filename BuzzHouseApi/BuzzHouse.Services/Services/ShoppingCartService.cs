@@ -11,12 +11,14 @@ public class ShoppingCartService: IShoppingCartService
     private readonly CosmosClient _cosmosClient;
     private readonly CosmosDbOptions _cosmosDbOptions;
     private readonly ShoppingCartOptions _shoppingCartOptions;
+    private readonly IUserService _userService;
     
-    public ShoppingCartService(CosmosClient cosmosClient, IOptions<CosmosDbOptions> options, IOptions<ShoppingCartOptions> shoppingCartOptions)
+    public ShoppingCartService(CosmosClient cosmosClient, IOptions<CosmosDbOptions> options, IOptions<ShoppingCartOptions> shoppingCartOptions, IUserService userService)
     {
         _cosmosClient = cosmosClient;
         _cosmosDbOptions = options.Value;
         _shoppingCartOptions = shoppingCartOptions.Value;
+        _userService = userService;
     }
     public async Task<ServiceResult<ShoppingCart>> CreateShoppingCartAsync(string userId)
     {
@@ -135,6 +137,7 @@ public class ShoppingCartService: IShoppingCartService
 
     public async Task<IEnumerable<ShoppingCart>> GetShoppingCartsAsync()
     {
+        var user = await _userService.GetOrCreateCurrentUserAsync();
         var shoppingCarts = new List<ShoppingCart>();
         
         try
@@ -142,7 +145,7 @@ public class ShoppingCartService: IShoppingCartService
             var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName, _shoppingCartOptions.ContainerName);
             var query = container.GetItemQueryIterator<ShoppingCart>(new QueryDefinition(
                 "SELECT sc.id, sc.userId, sc.cartItems FROM " + _shoppingCartOptions.ContainerName +
-                " AS sc"));
+                " AS sc WHERE sc.userId = @userId ").WithParameter("@userId", user.Id));
 
             while (query.HasMoreResults)
             {
