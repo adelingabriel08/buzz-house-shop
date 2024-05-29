@@ -1,4 +1,5 @@
 import { Cart } from "./cart";
+import { ShippingAddress } from "./shippingAddress";
 
 export interface Order{
     id: string;
@@ -10,13 +11,3 @@ export interface Order{
     cart?: Cart;
 }
 
-export interface ShippingAddress{
-    street: string;
-    number: string;
-    apartmentNumber?: string;
-    floor?: string;
-    additionalDetails?: string;
-    city: string;
-    postalCode: string;
-    country: string;
-}

@@ -1,7 +1,8 @@
 import axios, { AxiosResponse } from "axios";
 import { Product } from "../models/product";
-import { Cart, CartItem } from "../models/cart";
 import {getIdToken} from "../util/util";
+import { Cart } from "../models/cart";
+import { CartItem } from "../models/cartItem";
 
 axios.defaults.baseURL = 'http://localhost:5147/api/';
 

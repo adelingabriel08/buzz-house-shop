@@ -1,67 +1,40 @@
-import { Checkbox, FormControlLabel, Grid, TextField, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
+import { useFormContext } from "react-hook-form";
+import AppTextInput from "../../app/components/AppTextInput";
+import AppCheckbox from "../../app/components/AppCheckbox";
 
 export default function AddressForm(){
+    const {control, handleSubmit} = useFormContext();
     return (
         <>
             <Typography variant="h6" gutterBottom>Shipping address</Typography>
             <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
-                    <TextField required
-                               id="firstName"
-                               name="firstName"
-                               label="First name"
-                               fullWidth
-                               autoComplete="given-name"
-                               variant="standard"/>
+                <Grid item xs={12}>
+                    <AppTextInput control={control} name="street" label="Street" />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                    <AppTextInput control={control} name="number" label="Number" />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                    <AppTextInput control={control} name="apartmentNumber" label="ApartmentNumber" />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                    <AppTextInput control={control} name="floor" label="Floor" />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField required
-                               id="lastName"
-                               name="lastName"
-                               label="Last name"
-                               fullWidth
-                               autoComplete="family-name"
-                               variant="standard"/>
+                    <AppTextInput control={control} name="city" label="City" />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField required
-                               id="address"
-                               name="address"
-                               label="Address line"
-                               fullWidth
-                               autoComplete="shipping adress-line"
-                               variant="standard"/>
+                    <AppTextInput control={control} name="postalCode" label="PostalCode" />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField required
-                               id="state"
-                               name="state"
-                               label="State/Province/Region"
-                               fullWidth
-                               variant="standard"/>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <TextField required
-                               id="zip"
-                               name="zip"
-                               label="Zip / Postal code"
-                               fullWidth
-                               autoComplete="shipping postal-code"
-                               variant="standard"/>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <TextField required
-                               id="country"
-                               name="country"
-                               label="Country"
-                               fullWidth
-                               autoComplete="shipping country"
-                               variant="standard"/>
+                    <AppTextInput control={control} name="country" label="Country" />
                 </Grid>
                 <Grid item xs={12}>
-                    <FormControlLabel
-                        control={<Checkbox color="secondary" name="saveAddress" value="yes" />}
-                        label="Use this address for payment details" />
+                    <AppTextInput control={control} name="additionalDetails" label="AdditionalDetails" />
+                </Grid>
+                <Grid item xs={12}>
+                    <AppCheckbox name='saveAddress' label="Save this as the default address" control={control} />
                 </Grid>
             </Grid>
         </>
