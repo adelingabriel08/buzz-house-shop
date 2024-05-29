@@ -67,6 +67,7 @@ public class OrderService: IOrderService
     
     public async Task<IEnumerable<Order>> GetOrdersByCreatedDateDescAsync()
     {
+        var user = await _userService.GetOrCreateCurrentUserAsync();
         var orders = new List<Order>();
         
         try
@@ -74,7 +75,7 @@ public class OrderService: IOrderService
             var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName,_ordersOptions.ContainerName);
             var query = container.GetItemQueryIterator<Order>(new QueryDefinition(
                 "SELECT o.id, o.createdDate, o.deliveryName, o.userId, o.shippingAddress, o.orderStatus, o.shoppingCart FROM " + _ordersOptions.ContainerName +
-                " AS o ORDER BY o.createdDate DESC" ));
+                " AS o WHERE o.userId = @userId ORDER BY o.createdDate DESC").WithParameter("@userId", user.Id));
 
             while (query.HasMoreResults)
             {
@@ -93,6 +94,7 @@ public class OrderService: IOrderService
     
     public async Task<IEnumerable<Order>> GetOrdersByOrderStatusAsync(int orderStatus)
     {
+        var user = await _userService.GetOrCreateCurrentUserAsync();
         var orders = new List<Order>();
         
         try
@@ -100,7 +102,7 @@ public class OrderService: IOrderService
             var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName,_ordersOptions.ContainerName);
             var query = container.GetItemQueryIterator<Order>(new QueryDefinition(
                 "SELECT o.id, o.createdDate, o.deliveryName, o.userId, o.shippingAddress, o.orderStatus, o.shoppingCart FROM " + _ordersOptions.ContainerName +
-                " AS o WHERE o.orderStatus = " + orderStatus));
+                " AS o WHERE o.orderStatus = @orderStatus AND o.userId = @userId").WithParameter("@orderStatus", orderStatus).WithParameter("@userId", user.Id));
 
             while (query.HasMoreResults)
             {
