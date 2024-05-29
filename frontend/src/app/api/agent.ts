@@ -1,9 +1,9 @@
 import axios, { AxiosResponse } from "axios";
 import { Product } from "../models/product";
-import { Cart } from "../models/cart";
+import { Cart, CartItem } from "../models/cart";
 import {getIdToken} from "../util/util";
 
-axios.defaults.baseURL = 'https://aca-app-bzh-uks.blackriver-3571cb92.uksouth.azurecontainerapps.io/api/';
+axios.defaults.baseURL = 'http://localhost:5147/api/';
 
 const responseBody = (response: AxiosResponse) => response.data;
 
@@ -22,25 +22,25 @@ const Catalog = {
     delete : (id:number) => requests.delete(`products/${id}`)
 }
 
-const Orders = {
+const Order = {
     list: () => requests.get('orders'),
     list_date: () => requests.get('orders/createdDate'),
     order_status: (orderStatus : string) => requests.get(`orders/orderStatus/${orderStatus}`),
-    detail: (id: number) => requests.get(`orders/${id}`),
+    details: (orderId: string) => requests.get(`orders/orderId/${orderId}?orderId=${orderId}`),
     update: (id: number) => requests.put(`orders/${id}`, {}),
     delete : (id:number) => requests.delete(`orders/${id}`)
 }
 
 const ShoppingCart = {
-    get: (cartId: string) => requests.get(`shoppingcart/${cartId}?shoppingCartId=${cartId}`),
+    list: (cartId: string) => requests.get(`shoppingcart/${cartId}?shoppingCartId=${cartId}`),
     create: (cart: Cart) => requests.post(`shoppingcart?shoppingCart=${cart}`, {}),
-    addItem: (productId: string, quantity = 1) => requests.put(`shoppingcart?productId=${productId}&quantity=${quantity}`, {}),
-    removeItem: (productId: string, quantity = 1) => requests.delete(`shoppingcart?productId=${productId}&quantity=${quantity}`)
+    addItem: (userId: string, cartItem: CartItem) => requests.post(`shoppingcart/${userId}/items?shoppingCartId=${userId}`, cartItem),
+    removeItem: (cartId: string, productId: string) => requests.delete(`shoppingcart/${cartId}/items/${productId}?shoppingCartId=${cartId}&productId=${productId}`)
 }
 
 const agent = {
     Catalog,
-    Orders,
+    Order,
     ShoppingCart
 }
 

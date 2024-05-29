@@ -18,13 +18,13 @@ export default function ProductCard({product} : Props){
     function handleAddItem(product: Product) {
         console.log(`Adding product to cart: ${product.id}`);
         console.log(`CartId: ${cart?.id}`)
-        setLoading(true);
+        // setLoading(true);
 
-        if(!cart) return;
-        agent.ShoppingCart.addItem(product.id)
-            .then(cart => setCart(cart))
-            .catch(error => console.log(error))
-            .finally(() => setLoading(false));
+        // if(!cart) return;
+        // agent.ShoppingCart.addItem(product.id)
+        //     .then(cart => setCart(cart))
+        //     .catch(error => console.log(error))
+        //     .finally(() => setLoading(false));
     }
 
     return(
