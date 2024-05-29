@@ -4,9 +4,7 @@ import RoutingComponent from "../../RoutingComponent";
 import Header from './Header';
 import { useEffect, useState } from 'react';
 import { useStoreContext } from '../context/StoreContext';
-import { getCookie } from '../util/util';
 import agent from '../api/agent';
-import { error } from 'console';
 import LoadingComponent from './LoadingComponent';
 
 export default function App() {

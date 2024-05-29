@@ -1,12 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Order } from "../../app/models/order";
-import agent from "../../app/api/agent";
-import SendIcon from '@mui/icons-material/Send';
-import { LoadingButton } from "@mui/lab";
-import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, ListSubheader, ListItem, Grid, Typography } from "@mui/material";
+import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Box, ListItemText, ListItem, Grid, Typography } from "@mui/material";
 import { calculateSubtotal, currencyFormat } from "../../app/util/util";
-import { Height } from "@mui/icons-material";
 
 export default function OrderDetails(){
     const {id} = useParams<{id: string}>();

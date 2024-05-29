@@ -3,7 +3,7 @@ import { useState } from "react";
 import AddressForm from "./AddressForm";
 import PaymentForm from "./PaymentForm";
 import Review from "./Review";
-import { FieldValue, FieldValues, FormProvider, useForm } from "react-hook-form";
+import { FieldValues, FormProvider, useForm } from "react-hook-form";
 import {yupResolver} from '@hookform/resolvers/yup'
 import { validationSchema } from "./checkoutValidation";
 

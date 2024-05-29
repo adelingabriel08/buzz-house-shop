@@ -1,5 +1,3 @@
-import {Simulate} from "react-dom/test-utils";
-import canPlayThrough = Simulate.canPlayThrough;
 import { Cart } from "../models/cart";
 
 export function getCookie(key: string){

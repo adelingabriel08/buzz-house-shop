@@ -3,6 +3,7 @@ import { Product } from "../models/product";
 import {getIdToken} from "../util/util";
 import { Cart } from "../models/cart";
 import { CartItem } from "../models/cartItem";
+import { Order as OrderModel } from "../models/order";
 
 axios.defaults.baseURL = 'http://localhost:5147/api/';
 
@@ -17,24 +18,20 @@ const requests = {
 
 const Catalog = {
     list: () => requests.get('products'),
-    create: (product: Product) => requests.get(`products?product=${product}`),
-    details: (id: string) => requests.get(`products/${id}`),
-    update: (id:number) => requests.put(`products/${id}`, {}),
-    delete : (id:number) => requests.delete(`products/${id}`)
+    create: (product: Product) => requests.post(`products`, {product}),
+    details: (productId: string) => requests.get(`products/${productId}?productId=${productId}`),
 }
 
 const Order = {
     list: () => requests.get('orders'),
-    list_date: () => requests.get('orders/createdDate'),
-    order_status: (orderStatus : string) => requests.get(`orders/orderStatus/${orderStatus}`),
     details: (orderId: string) => requests.get(`orders/orderId/${orderId}?orderId=${orderId}`),
-    update: (id: number) => requests.put(`orders/${id}`, {}),
+    update: (order: OrderModel) => requests.put(`orders/${order.id}?orderId=${order.id}`, {order}),
     delete : (id:number) => requests.delete(`orders/${id}`)
 }
 
 const ShoppingCart = {
     list: (cartId: string) => requests.get(`shoppingcart/${cartId}?shoppingCartId=${cartId}`),
-    create: (cart: Cart) => requests.post(`shoppingcart?shoppingCart=${cart}`, {}),
+    create: (cart: Cart) => requests.post(`shoppingcart?`, {cart}),
     addItem: (userId: string, cartItem: CartItem) => requests.post(`shoppingcart/${userId}/items?shoppingCartId=${userId}`, cartItem),
     removeItem: (cartId: string, productId: string) => requests.delete(`shoppingcart/${cartId}/items/${productId}?shoppingCartId=${cartId}&productId=${productId}`)
 }

@@ -1,11 +1,7 @@
-import { Remove, Add, Delete } from "@mui/icons-material";
-import { LoadingButton } from "@mui/lab";
-import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Box, Button } from "@mui/material";
-import { currencyFormat } from "../../app/util/util";
+import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button } from "@mui/material";
 import { Order } from "../../app/models/order";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import agent from "../../app/api/agent";
 
 export default function OrderHistory() {
     const [orders, setOrders] = useState<Order[]>([{
