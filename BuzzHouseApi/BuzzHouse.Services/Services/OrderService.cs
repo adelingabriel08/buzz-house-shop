@@ -27,7 +27,7 @@ public class OrderService: IOrderService
     {
         try
         {
-            var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName,_ordersOptions.ContainerName);
+            var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName, _ordersOptions.ContainerName);
             await container.CreateItemAsync(order, new PartitionKey(order.UserId.ToString()));
         }
         catch (Exception ex)
@@ -124,7 +124,7 @@ public class OrderService: IOrderService
         try
         {
             var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName,_ordersOptions.ContainerName);
-            var response = await container.ReadItemAsync<Order>(orderId.ToString(), new PartitionKey(orderId.ToString()));
+            var response = await container.ReadItemAsync<Order>(orderId.ToString(), new PartitionKey((await _userService.GetOrCreateCurrentUserAsync()).Id));
             return response.Resource;
         }
         catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
