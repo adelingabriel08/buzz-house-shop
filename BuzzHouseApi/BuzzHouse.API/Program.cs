@@ -9,6 +9,8 @@ using Microsoft.Azure.Cosmos;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.Configuration.AddEnvironmentVariables(prefix: "BuzzHouse_");
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -90,7 +92,7 @@ var ordersOptions = builder.Configuration.GetSection(nameof(OrdersOptions)).Get<
 var cosmosDbOptions = builder.Configuration.GetSection(nameof(CosmosDbOptions)).Get<CosmosDbOptions>();
 
 var serializerOptions = new CosmosSerializationOptions() { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase };
-var clientOptions = new CosmosClientOptions() { SerializerOptions = serializerOptions };
+var clientOptions = new CosmosClientOptions() { SerializerOptions = serializerOptions, ApplicationRegion = cosmosDbOptions.DeploymentRegion };
 var cosmosClient = new CosmosClient(cosmosDbOptions.CosmosUrl, cosmosDbOptions.CosmosKey, clientOptions);
 
 builder.Services.AddSingleton(cosmosClient);
@@ -117,11 +119,10 @@ builder.Services.AddAuthentication(x =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 //app.UseHttpsRedirection();
 

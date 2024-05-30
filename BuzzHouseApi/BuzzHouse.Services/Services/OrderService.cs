@@ -27,7 +27,7 @@ public class OrderService: IOrderService
     {
         try
         {
-            var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName,_ordersOptions.ContainerName);
+            var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName, _ordersOptions.ContainerName);
             await container.CreateItemAsync(order, new PartitionKey(order.UserId.ToString()));
         }
         catch (Exception ex)

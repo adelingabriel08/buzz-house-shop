@@ -9,6 +9,6 @@ public class Order
     public DateTime DeliveryDate { set; get; }
     public string UserId { set; get; }
     public ShippingAddress ShippingAddress { set; get; }
-    public int OrderStatus { set; get; }
+    public string OrderStatus { set; get; }
     public ShoppingCart ShoppingCart { set; get; }
 }

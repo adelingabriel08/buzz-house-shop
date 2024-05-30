@@ -48,7 +48,7 @@ public class ShoppingCartService: IShoppingCartService
 
             var shoppingCart = response.Resource;
             cartItem.Price = cartItem.Product.Price * cartItem.Quantity;
-
+            
             var existingCartItem = shoppingCart.CartItems.FirstOrDefault(ci => ci.Product.Id == cartItem.Product.Id && ci.ProductSize == cartItem.ProductSize);
 
             if (existingCartItem != null)
@@ -149,7 +149,6 @@ public class ShoppingCartService: IShoppingCartService
     public async Task<ShoppingCart> GetShoppingCartsAsync()
     {
         var user = await _userService.GetOrCreateCurrentUserAsync();
-
         try
         {
             var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName, _shoppingCartOptions.ContainerName);
