@@ -36,5 +36,5 @@ export function calculateSubtotal(cart?: Cart | null): number {
 }
 
 export function calculateDeliveryFee(subtotal: number): number {
-    return subtotal > 1000 ? 0 : 500;
+    return subtotal > 10000 ? 0 : 500;
 }

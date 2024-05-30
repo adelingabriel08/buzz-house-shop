@@ -25,16 +25,18 @@ const Catalog = {
 const Order = {
     list: () => requests.get('orders'),
     details: (orderId: string) => requests.get(`orders/orderId/${orderId}?orderId=${orderId}`),
+    create: (order: OrderModel) => requests.post(`orders`, order),
     update: (order: OrderModel) => requests.put(`orders/${order.id}?orderId=${order.id}`, {order}),
     delete : (id:number) => requests.delete(`orders/${id}`)
 }
 
 const ShoppingCart = {
     list: () => requests.get(`shoppingcart`),
-    create: (cart: Cart) => requests.post(`shoppingcart?`, {cart}),
+    create: (userId: string | null) => requests.post(`shoppingcart?userId=${userId}`, {}),
     addItem: (cartId: string, cartItem: CartItem) => requests.post(`shoppingcart/${cartId}/items?shoppingCartId=${cartId}`, cartItem),
     updateCartitem: (cartId: string, cartItem: CartItem) => requests.put(`shoppingcart/${cartId}/items?shoppingCartId=${cartId}`, cartItem),
-    removeItem: (cartId: string, productId: string) => requests.delete(`shoppingcart/${cartId}/items/${productId}?shoppingCartId=${cartId}&productId=${productId}`)
+    removeCartItem: (cartId: string, cartItem: CartItem) => requests.delete(`shoppingcart/${cartId}/items/${cartItem.product.id}?shoppingCartId=${cartId}&productId=${cartItem.product.id}`),
+    deleteCart: (cart: Cart | null) => requests.delete(`shoppingcart/${cart?.id}?shoppingCartId=${cart?.id}`)
 }
 
 const agent = {

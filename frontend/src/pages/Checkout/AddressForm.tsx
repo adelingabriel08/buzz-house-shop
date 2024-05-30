@@ -33,9 +33,9 @@ export default function AddressForm(){
                 <Grid item xs={12}>
                     <AppTextInput control={control} name="additionalDetails" label="AdditionalDetails" />
                 </Grid>
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                     <AppCheckbox name='saveAddress' label="Save this as the default address" control={control} />
-                </Grid>
+                </Grid> */}
             </Grid>
         </>
 

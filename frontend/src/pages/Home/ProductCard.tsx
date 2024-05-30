@@ -18,8 +18,7 @@ export default function ProductCard({product} : Props){
     const {cart, setCart} = useStoreContext();
 
     function handleAddItem(product: Product) {
-        console.log(`Adding product to cart: ${product.id}`);
-        console.log(`CartId: ${cart?.id}`)
+        console.log(`Adding product to cart: ${product}`);
         setLoading(true);
 
         const cartItem: CartItem = {
@@ -29,6 +28,7 @@ export default function ProductCard({product} : Props){
             customDetails: product.description,
             price: product.price
         }
+        
         if(cart)
             agent.ShoppingCart.addItem(cart.id, cartItem)
             .then(cart => setCart(cart))

@@ -29,16 +29,34 @@ export default function CartTable({isCart=true}: Props){
     }
 
     function handleRemoveItem(cartItem: CartItem) {
-        setStatus({loading: true, name: 'add' + cartItem.product.id});
-        cartItem.quantity -= 1;
+        setStatus({loading: true, name: 'rem' + cartItem.product.id});
+        if(cartItem.quantity === 0 ) cartItem.quantity -= 1;
+        if(cart){
+            if(cartItem.quantity - 1 > 0){
+                cartItem.quantity -= 1;
+                agent.ShoppingCart.updateCartitem(cart.id, cartItem)
+                    .then(cart => setCart(cart))
+                    .catch(error => console.log(error))
+                    .finally(() => setStatus({loading: false, name: ''}));
+            } else{
+                agent.ShoppingCart.removeCartItem(cart.id, cartItem)
+                    .then(cart => setCart(cart))
+                    .catch(error => console.log(error))
+                    .finally(() => setStatus({loading: false, name: ''}));
+            }
+        }
+        setStatus({loading: false, name: ''});
+    }
+
+    function handleDeleteItem(cartItem: CartItem) {
+        setStatus({loading: true, name: 'del' + cartItem.product.id});
         if(cart)
-            agent.ShoppingCart.updateCartitem(cart.id, cartItem)
+            agent.ShoppingCart.removeCartItem(cart.id, cartItem)
                 .then(cart => setCart(cart))
                 .catch(error => console.log(error))
                 .finally(() => setStatus({loading: false, name: ''}));
         setStatus({loading: false, name: ''});
     }
-
 
     return (
         <TableContainer component={Paper}>
@@ -88,7 +106,7 @@ export default function CartTable({isCart=true}: Props){
                             {isCart &&
                             <TableCell align="right">
                                 <LoadingButton loading={status.loading && status.name === 'del' + cartItem.product.id} 
-                                            onClick={() => handleRemoveItem(cartItem)} 
+                                            onClick={() => handleDeleteItem(cartItem)} 
                                             color="error">
                                     <Delete />
                                 </LoadingButton>

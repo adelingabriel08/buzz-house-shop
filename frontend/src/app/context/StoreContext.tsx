@@ -38,16 +38,15 @@ export function StoreProvider({children}: PropsWithChildren<any>){
 
     useEffect(() => {
         agent.ShoppingCart.list()
-          .then(cart1 => {
-            console.log(cart1);
-            setCart(cart1);
+          .then(cart => {
+            console.log(`Received cart from API: ${cart}`);
+            setCart(cart);
             })
           .catch(error => console.log(error))
           .finally(() => setLoading(false));
       }, [setCart]);
     
     if(loading) return <LoadingComponent message='Initialising app ...'/>
-    console.log(`This is the cart id: ${cart?.id}`)
     return (
         <StoreContext.Provider value={{cart, setCart, removeItem}}>
             {children}

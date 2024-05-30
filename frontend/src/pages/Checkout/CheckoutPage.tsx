@@ -6,9 +6,13 @@ import Review from "./Review";
 import { FieldValues, FormProvider, useForm } from "react-hook-form";
 import {yupResolver} from '@hookform/resolvers/yup'
 import { validationSchema } from "./checkoutValidation";
+import { useStoreContext } from "../../app/context/StoreContext";
+import { Order } from "../../app/models/order";
+import { ShippingAddress } from "../../app/models/shippingAddress";
+import agent from "../../app/api/agent";
 
 
-const steps = ['Shipping address', 'Payment details', 'Review your order'];
+const steps = ['Shipping address', 'Review your order', 'Payment details'];
 function getStepContent(step: number) {
     switch (step) {
       case 0:
@@ -23,7 +27,10 @@ function getStepContent(step: number) {
 }
 
 export default function CheckoutPage() {
+    const {cart, setCart} = useStoreContext();
     const [activeStep, setActiveStep] = useState(0);
+    const [orderNumber, setOrderNumber] = useState('');
+    const [loading, setLoading] = useState(false);
     const currentValidationSchema = validationSchema[activeStep];
 
     const methods = useForm({
@@ -31,8 +38,34 @@ export default function CheckoutPage() {
         resolver: yupResolver(currentValidationSchema)
     });
 
-    const handleNext = (data: FieldValues) => {
-        if(activeStep === 2) console.log(data);
+    const handleNext = async (data: FieldValues) => {
+        const {nameOnCard, ...shippingAddress} = data;
+        if(activeStep === steps.length - 1){
+            setLoading(true);
+            try{
+                const orderToCreate: Order ={
+                    id: 'g-u-i-d',
+                    createdDate: new Date(),
+                    deliveryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+                    userId: cart?.userId,
+                    shippingAddress: shippingAddress as ShippingAddress,
+                    orderStatus: 0,
+                    cart: cart
+                }
+                console.log(orderToCreate);
+                // await agent.Order.create(orderToCreate);
+                const userId = cart?.userId ?? '';
+                await agent.ShoppingCart.deleteCart(cart);
+                agent.ShoppingCart.create(userId)
+                    .then(cart => setCart(cart))
+                    .catch(error => console.log(error))
+                    .finally(() => setLoading(false));
+                setLoading(false);
+            } catch (error){
+                console.log(error);
+                setLoading(false);
+            }
+        } 
         setActiveStep(activeStep + 1);
     };
     
