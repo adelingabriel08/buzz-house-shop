@@ -8,6 +8,6 @@ export interface Order{
     userId?: string;
     shippingAddress?: ShippingAddress;
     orderStatus: number;
-    cart?: Cart;
+    cart: Cart | null;
 }
 

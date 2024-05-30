@@ -5,7 +5,9 @@ import { calculateDeliveryFee, calculateSubtotal, currencyFormat } from "../../a
 export default function CartSummary(){
     const {cart} = useStoreContext();
     const subtotal = calculateSubtotal(cart);
+    console.log(`Subtotal: ${subtotal}`);
     const deliveryFee = calculateDeliveryFee(subtotal);
+    console.log(`Delivery fee: ${deliveryFee}`);
 
     return (
         <>

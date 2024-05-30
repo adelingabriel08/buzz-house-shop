@@ -79,7 +79,7 @@ public class ShoppingCartController: ControllerBase
         var result = await _shoppingCartService.GetShoppingCartsAsync();
         if (result == null)
             return NotFound();
-        
+
         return result;
     }
 

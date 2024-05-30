@@ -149,7 +149,6 @@ public class ShoppingCartService: IShoppingCartService
     public async Task<ShoppingCart> GetShoppingCartsAsync()
     {
         var user = await _userService.GetOrCreateCurrentUserAsync();
-    
         try
         {
             var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName, _shoppingCartOptions.ContainerName);
@@ -172,29 +171,6 @@ public class ShoppingCartService: IShoppingCartService
             Console.WriteLine(e.Message);
             throw;
         }
-        // var user = await _userService.GetOrCreateCurrentUserAsync();
-        // var shoppingCarts = new List<ShoppingCart>();
-        //
-        // try
-        // {
-        //     var container = _cosmosClient.GetContainer(_cosmosDbOptions.DatabaseName, _shoppingCartOptions.ContainerName);
-        //     var query = container.GetItemQueryIterator<ShoppingCart>(new QueryDefinition(
-        //         "SELECT sc.id, sc.userId, sc.cartItems FROM " + _shoppingCartOptions.ContainerName +
-        //         " AS sc WHERE sc.userId = @userId ").WithParameter("@userId", user.Id));
-        //
-        //     while (query.HasMoreResults)
-        //     {
-        //         var response = await query.ReadNextAsync();
-        //         shoppingCarts.AddRange(response);
-        //     }
-        // }
-        // catch (Exception e)
-        // {
-        //     Console.WriteLine(e.Message);
-        //     throw;
-        // }
-        //
-        // return shoppingCarts;
     }
 
     public async Task<ShoppingCart> GetShoppingCartByIdAsync(string shoppingCartId)

@@ -1,5 +1,3 @@
-import {Simulate} from "react-dom/test-utils";
-import canPlayThrough = Simulate.canPlayThrough;
 import { Cart } from "../models/cart";
 
 export function getCookie(key: string){
@@ -34,9 +32,9 @@ export function cleanIdToken()
 }
 
 export function calculateSubtotal(cart?: Cart | null): number {
-    return cart?.cartItems.reduce((sum, item) => sum + (item.quantity * item.price), 0) ?? 0;
+    return cart?.cartItems?.reduce((sum, item) => sum + (item.quantity * item.price), 0) ?? 0;
 }
 
 export function calculateDeliveryFee(subtotal: number): number {
-    return subtotal > 1000 ? 0 : 500;
+    return subtotal > 10000 ? 0 : 500;
 }

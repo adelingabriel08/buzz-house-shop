@@ -4,7 +4,7 @@ import { Product } from "../../app/models/product";
 import ProductList from "./ProductList";
 import { useEffect, useState } from "react";
 
-export default function HomePage() {
+export default function ProductPage() {
     const[products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
 

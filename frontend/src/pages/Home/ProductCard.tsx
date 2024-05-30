@@ -6,6 +6,8 @@ import agent from "../../app/api/agent";
 import { LoadingButton } from "@mui/lab";
 import { useStoreContext } from "../../app/context/StoreContext";
 import { currencyFormat } from "../../app/util/util";
+import { Cart } from "../../app/models/cart";
+import { CartItem } from "../../app/models/cartItem";
 
 interface Props{
     product: Product;
@@ -16,15 +18,22 @@ export default function ProductCard({product} : Props){
     const {cart, setCart} = useStoreContext();
 
     function handleAddItem(product: Product) {
-        console.log(`Adding product to cart: ${product.id}`);
-        console.log(`CartId: ${cart?.id}`)
-        // setLoading(true);
+        console.log(`Adding product to cart: ${product}`);
+        setLoading(true);
 
-        // if(!cart) return;
-        // agent.ShoppingCart.addItem(product.id)
-        //     .then(cart => setCart(cart))
-        //     .catch(error => console.log(error))
-        //     .finally(() => setLoading(false));
+        const cartItem: CartItem = {
+            product: product,
+            quantity: 1,
+            productSize: product.type,
+            customDetails: product.description,
+            price: product.price
+        }
+        
+        if(cart)
+            agent.ShoppingCart.addItem(cart.id, cartItem)
+            .then(cart => setCart(cart))
+            .catch(error => console.log(error))
+            .finally(() => setLoading(false));
     }
 
     return(

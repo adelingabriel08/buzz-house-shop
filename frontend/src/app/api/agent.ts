@@ -3,6 +3,7 @@ import { Product } from "../models/product";
 import {getIdToken} from "../util/util";
 import { Cart } from "../models/cart";
 import { CartItem } from "../models/cartItem";
+import { Order as OrderModel } from "../models/order";
 
 axios.defaults.baseURL = 'http://localhost:5147/api/';
 
@@ -17,26 +18,25 @@ const requests = {
 
 const Catalog = {
     list: () => requests.get('products'),
-    create: (product: Product) => requests.get(`products?product=${product}`),
-    details: (id: string) => requests.get(`products/${id}`),
-    update: (id:number) => requests.put(`products/${id}`, {}),
-    delete : (id:number) => requests.delete(`products/${id}`)
+    create: (product: Product) => requests.post(`products`, {product}),
+    details: (productId: string) => requests.get(`products/${productId}?productId=${productId}`),
 }
 
 const Order = {
     list: () => requests.get('orders'),
-    list_date: () => requests.get('orders/createdDate'),
-    order_status: (orderStatus : string) => requests.get(`orders/orderStatus/${orderStatus}`),
     details: (orderId: string) => requests.get(`orders/orderId/${orderId}?orderId=${orderId}`),
-    update: (id: number) => requests.put(`orders/${id}`, {}),
+    create: (order: OrderModel) => requests.post(`orders`, order),
+    update: (order: OrderModel) => requests.put(`orders/${order.id}?orderId=${order.id}`, {order}),
     delete : (id:number) => requests.delete(`orders/${id}`)
 }
 
 const ShoppingCart = {
-    list: (cartId: string) => requests.get(`shoppingcart/${cartId}?shoppingCartId=${cartId}`),
-    create: (cart: Cart) => requests.post(`shoppingcart?shoppingCart=${cart}`, {}),
-    addItem: (userId: string, cartItem: CartItem) => requests.post(`shoppingcart/${userId}/items?shoppingCartId=${userId}`, cartItem),
-    removeItem: (cartId: string, productId: string) => requests.delete(`shoppingcart/${cartId}/items/${productId}?shoppingCartId=${cartId}&productId=${productId}`)
+    list: () => requests.get(`shoppingcart`),
+    create: (userId: string | null) => requests.post(`shoppingcart?userId=${userId}`, {}),
+    addItem: (cartId: string, cartItem: CartItem) => requests.post(`shoppingcart/${cartId}/items?shoppingCartId=${cartId}`, cartItem),
+    updateCartitem: (cartId: string, cartItem: CartItem) => requests.put(`shoppingcart/${cartId}/items?shoppingCartId=${cartId}`, cartItem),
+    removeCartItem: (cartId: string, cartItem: CartItem) => requests.delete(`shoppingcart/${cartId}/items/${cartItem.product.id}?shoppingCartId=${cartId}&productId=${cartItem.product.id}`),
+    deleteCart: (cart: Cart | null) => requests.delete(`shoppingcart/${cart?.id}?shoppingCartId=${cart?.id}`)
 }
 
 const agent = {

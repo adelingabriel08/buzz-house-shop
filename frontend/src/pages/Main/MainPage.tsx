@@ -1,4 +1,3 @@
-import  React from 'react';
 import Tshirt from '../../best-t-shirts-for-men.png'
 import Sys32 from '../../sys32.png'
 
