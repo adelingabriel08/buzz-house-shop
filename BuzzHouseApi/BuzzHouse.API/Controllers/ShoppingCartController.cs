@@ -74,9 +74,12 @@ public class ShoppingCartController: ControllerBase
     }
 
     [HttpGet]
-    public async Task<IEnumerable<ShoppingCart>> GetShoppingCarts()
+    public async Task<ActionResult<ShoppingCart>> GetShoppingCarts()
     {
         var result = await _shoppingCartService.GetShoppingCartsAsync();
+        if (result == null)
+            return NotFound();
+        
         return result;
     }
 

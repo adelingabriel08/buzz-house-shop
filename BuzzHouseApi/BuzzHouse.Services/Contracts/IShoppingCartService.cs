@@ -6,7 +6,7 @@ namespace BuzzHouse.Services.Contracts;
 public interface IShoppingCartService
 {
     Task<ServiceResult<ShoppingCart>> CreateShoppingCartAsync(string userId);
-    Task<IEnumerable<ShoppingCart>> GetShoppingCartsAsync();
+    Task<ShoppingCart> GetShoppingCartsAsync();
     Task<ShoppingCart> GetShoppingCartByIdAsync(string shoppingCartId);
     Task<ShoppingCart> UpdateShoppingCartByIdAsync(string shoppingCartId, ShoppingCart shoppingCart);
     Task DeleteShoppingCartAsync(string shoppingCartId);
